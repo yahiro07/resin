@@ -1,6 +1,6 @@
 # dom-styled
 
-A Small css-in-js library works with deno and fresh.
+A lightweight css-in-js library works with Deno and Fresh.
 
 ## Usage
 
@@ -58,7 +58,7 @@ and all css are settled in this tag.
 
 ### Global Style
 
-If you want to write the global css in the code, refer the code below.
+If you want to write the global css, refer the code below.
 
 ```ts
 const globalCss = css`
