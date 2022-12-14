@@ -22,7 +22,7 @@ export const crc32 = (str: string): string => {
   return value.toString(16).padStart(8, "0");
 };
 
-function extractCssTemplate(
+export function extractCssTemplate(
   template: TemplateStringsArray,
   values: (string | number)[]
 ): string {
@@ -76,15 +76,4 @@ export function extractNestedCss(
 
 export function getBaseClassNameFromCssText(cssText: string) {
   return cssText.slice(1, 12);
-}
-
-export function css(
-  template: TemplateStringsArray,
-  ...templateParameters: (string | number)[]
-): string {
-  const inputCssText0 = extractCssTemplate(template, templateParameters);
-  const inputCssText = inputCssText0.replace(/,\r?\n/g, ",");
-  const className = `cs_${crc32(inputCssText)}`;
-  const cssText = extractNestedCss(inputCssText, `.${className}`);
-  return cssText;
 }
