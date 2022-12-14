@@ -44,19 +44,23 @@ export function extractNestedCss(
   const srcLines = cssBodyText
     .split(/\r?\n/)
     .map((line) => line.trim())
-    .filter((a) => !!a);
+    .filter((a) => !!a)
+    .map((line) => line.replace(/\: /g, ":"))
+    .map((line) => line.replace(/ \./g, "."))
+    .map((line) => line.replace(/ \{/g, "{"))
+    .map((line) => line.replace(/^\./g, " ."));
 
   const cssBlocks: Record<string, string[]> = {};
   const selectorPaths: string[] = [topSelector];
 
   for (const line of srcLines) {
     if (line.endsWith("{")) {
-      const selector = line.slice(0, line.length - 1).trim();
+      const selector = line.slice(0, line.length - 1);
       selectorPaths.push(selector);
     } else if (line.endsWith("}")) {
       selectorPaths.pop();
     } else {
-      const selectorPath = selectorPaths.join(" ").replace(/ &/g, "");
+      const selectorPath = selectorPaths.join("").replace(/ &/g, "");
 
       if (!cssBlocks[selectorPath]) {
         cssBlocks[selectorPath] = [];
@@ -65,7 +69,7 @@ export function extractNestedCss(
     }
   }
   return Object.keys(cssBlocks)
-    .map((key) => `${key} {${cssBlocks[key].join(" ")}}`)
+    .map((key) => `${key}{${cssBlocks[key].join(" ")}}`)
     .join(" ");
 }
 
