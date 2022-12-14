@@ -48,7 +48,8 @@ export function extractNestedCss(
     .map((line) => line.replace(/\: /g, ":"))
     .map((line) => line.replace(/ \./g, "."))
     .map((line) => line.replace(/ \{/g, "{"))
-    .map((line) => line.replace(/^\./g, " ."));
+    .map((line) => line.replace(/^\./g, " ."))
+    .map((line) => line.replace(/^\&/g, ""));
 
   const cssBlocks: Record<string, string[]> = {};
   const selectorPaths: string[] = [topSelector];

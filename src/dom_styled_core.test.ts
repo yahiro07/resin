@@ -37,3 +37,32 @@ Deno.test("extractNestedCss, nested", () => {
     `.foo{background:blue; font-size:20px;} .foo>.bar{color:green; font-weight:bold;} .foo .buzz{color:red;}`
   );
 });
+
+Deno.test("extractNestedCss, with ampersand", () => {
+  const parsed = extractNestedCss(
+    `
+      background: blue;
+      .bar {
+        color: purple;
+      }
+      &.buzz {
+        color: orange;
+      }
+      &:hover {
+        color: yellow;
+      }
+      &__inner {
+        color: green;
+      }
+      &--active {
+        color: lime;
+      }
+      font-size: 20px;
+    `,
+    ".foo"
+  );
+  assertEquals(
+    parsed,
+    `.foo{background:blue; font-size:20px;} .foo .bar{color:purple;} .foo.buzz{color:orange;} .foo:hover{color:yellow;} .foo__inner{color:green;} .foo--active{color:lime;}`
+  );
+});
