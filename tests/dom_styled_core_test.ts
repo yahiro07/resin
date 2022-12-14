@@ -1,5 +1,5 @@
 import { assertEquals } from "./deps.ts";
-import { crc32, extractNestedCss } from "./dom_styled_core.ts";
+import { crc32, extractNestedCss } from "../src/dom_styled_core.ts";
 
 Deno.test("crc32", () => {
   assertEquals(crc32("hello world"), "0d4a1185");
