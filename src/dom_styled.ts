@@ -50,7 +50,7 @@ function addClassToVdom(vdom: JSXElement, className: string): JSXElement {
 export const DomStyledCssEmitter: FunctionalComponent = () => {
   const pageCssFullText =
     Object.values(moduleLocalStateForSsr.pageCssTexts).join("\n") + "\n";
-  return h("styled", { id: "dom-styled-page-css-tag" }, pageCssFullText);
+  return h("style", { id: "dom-styled-page-css-tag" }, pageCssFullText);
 };
 
 function pushCssTextToEmitterForSsr(className: string, cssText: string) {
