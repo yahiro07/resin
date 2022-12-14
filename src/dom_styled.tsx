@@ -9,15 +9,31 @@ import { IS_BROWSER } from "$fresh/runtime.ts";
 
 type JSXElement = JSX.Element;
 
+const moduleLocalStateCommon = {
+  convertedCssTextCache: {} as Record<string, string>,
+};
+
+const moduleLocalStateForSsr = {
+  pageCssTexts: {} as Record<string, string>,
+};
+
+const moduleLocalStateForBrowser = {
+  pageCssClassNames: undefined as Set<string> | undefined,
+};
+
 export function css(
   template: TemplateStringsArray,
   ...templateParameters: (string | number)[]
 ): string {
-  const inputCssText0 = extractCssTemplate(template, templateParameters);
-  const inputCssText = inputCssText0.replace(/,\r?\n/g, ",");
-  const className = `cs_${crc32(inputCssText)}`;
-  const cssText = extractNestedCss(inputCssText, `.${className}`);
-  return cssText;
+  const { convertedCssTextCache } = moduleLocalStateCommon;
+  const inputCssText = extractCssTemplate(template, templateParameters);
+  if (!convertedCssTextCache[inputCssText]) {
+    const inputCssTextMod = inputCssText.replace(/,\r?\n/g, ",");
+    const className = `cs_${crc32(inputCssTextMod)}`;
+    const cssText = extractNestedCss(inputCssTextMod, `.${className}`);
+    convertedCssTextCache[inputCssText] = cssText;
+  }
+  return convertedCssTextCache[inputCssText];
 }
 
 function addClassToVdom(vdom: JSXElement, className: string): JSXElement {
@@ -30,14 +46,6 @@ function addClassToVdom(vdom: JSXElement, className: string): JSXElement {
     },
   };
 }
-
-const moduleLocalStateForSsr = {
-  pageCssTexts: {} as Record<string, string>,
-};
-
-const moduleLocalStateForBrowser = {
-  pageCssClassNames: undefined as Set<string> | undefined,
-};
 
 export const DomStyledCssEmitter: FunctionalComponent = () => {
   const pageCssFullText =
