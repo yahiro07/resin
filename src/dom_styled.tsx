@@ -1,0 +1,83 @@
+import { FunctionalComponent, JSX } from 'preact';
+import { getBaseClassNameFromCssText } from './dom_styled_core.ts';
+export { css } from './dom_styled_core.ts';
+import { IS_BROWSER } from '$fresh/runtime.ts';
+
+type JSXElement = JSX.Element;
+
+function addClassToVdom(vdom: JSXElement, className: string): JSXElement {
+  const originalClass = vdom.props.class;
+  return {
+    ...vdom,
+    props: {
+      ...vdom.props,
+      class: originalClass ? `${className} ${originalClass}` : className,
+    },
+  };
+}
+
+const moduleLocalStateForSsr = {
+  pageCssTexts: {} as Record<string, string>,
+};
+
+const moduleLocalStateForBrowser = {
+  pageCssClassNames: undefined as Set<string> | undefined,
+};
+
+export const DomStyledCssEmitter: FunctionalComponent = () => {
+  const pageCssFullText =
+    Object.values(moduleLocalStateForSsr.pageCssTexts).join('\n') + '\n';
+  return <style id='dom-styled-page-css-tag'>{pageCssFullText}</style>;
+};
+
+function pushCssTextToEmitterForSsr(className: string, cssText: string) {
+  const { pageCssTexts } = moduleLocalStateForSsr;
+  if (!pageCssTexts[className]) {
+    pageCssTexts[className] = cssText;
+  }
+}
+
+function getDomStyledPageCssTagNode(): HTMLElement {
+  const el = document.getElementById('dom-styled-page-css-tag')!;
+  if (!el) {
+    throw new Error(`page css tag not found for dom-styled`);
+  }
+  return el;
+}
+
+function pushCssTextToEmitterForBrowser(className: string, cssText: string) {
+  const sb = moduleLocalStateForBrowser;
+  if (!sb.pageCssClassNames) {
+    sb.pageCssClassNames = new Set();
+    const el = getDomStyledPageCssTagNode();
+    const matches = el.innerHTML.match(/cs_[\w]{8}/g);
+    if (matches) {
+      for (const m of matches) {
+        sb.pageCssClassNames.add(m);
+      }
+    }
+  }
+  if (!sb.pageCssClassNames.has(className)) {
+    const el = getDomStyledPageCssTagNode();
+    el.innerHTML += cssText;
+    sb.pageCssClassNames.add(className);
+  }
+}
+
+export function domStyled(vdom: JSXElement, cssText: string): JSXElement {
+  const className = getBaseClassNameFromCssText(cssText);
+  if (!IS_BROWSER) {
+    pushCssTextToEmitterForSsr(className, cssText);
+  } else {
+    pushCssTextToEmitterForBrowser(className, cssText);
+  }
+  return addClassToVdom(vdom, className);
+}
+
+export const DomStyledGlobalStyle: FunctionalComponent<{ css: string }> = ({
+  css: cssText,
+}) => {
+  const className = getBaseClassNameFromCssText(cssText);
+  const cssOutputText = cssText.replace(new RegExp(`.${className}`, 'g'), '');
+  return <style>{cssOutputText}</style>;
+};
