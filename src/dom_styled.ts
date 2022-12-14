@@ -1,4 +1,4 @@
-import { FunctionalComponent, JSX } from "preact";
+import { FunctionalComponent, JSX, h } from "preact";
 import {
   crc32,
   extractCssTemplate,
@@ -50,7 +50,7 @@ function addClassToVdom(vdom: JSXElement, className: string): JSXElement {
 export const DomStyledCssEmitter: FunctionalComponent = () => {
   const pageCssFullText =
     Object.values(moduleLocalStateForSsr.pageCssTexts).join("\n") + "\n";
-  return <style id="dom-styled-page-css-tag">{pageCssFullText}</style>;
+  return h("styled", { id: "dom-styled-page-css-tag" }, pageCssFullText);
 };
 
 function pushCssTextToEmitterForSsr(className: string, cssText: string) {
@@ -102,5 +102,5 @@ export const DomStyledGlobalStyle: FunctionalComponent<{ css: string }> = ({
 }) => {
   const className = getBaseClassNameFromCssText(cssText);
   const cssOutputText = cssText.replace(new RegExp(`.${className}`, "g"), "");
-  return <style>{cssOutputText}</style>;
+  return h("style", null, cssOutputText);
 };
