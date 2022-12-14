@@ -5,9 +5,10 @@ import {
   extractNestedCss,
   getBaseClassNameFromCssText,
 } from "./dom_styled_core.ts";
-import { IS_BROWSER } from "$fresh/runtime.ts";
 
 type JSXElement = JSX.Element;
+
+const IS_BROWSER = typeof document !== "undefined";
 
 const moduleLocalStateCommon = {
   convertedCssTextCache: {} as Record<string, string>,
