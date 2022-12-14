@@ -71,7 +71,7 @@ export function extractNestedCss(
   }
   return Object.keys(cssBlocks)
     .map((key) => `${key}{${cssBlocks[key].join(" ")}}`)
-    .join(" ");
+    .join("\n");
 }
 
 export function getBaseClassNameFromCssText(cssText: string) {

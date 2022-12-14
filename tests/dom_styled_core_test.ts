@@ -34,7 +34,9 @@ Deno.test("extractNestedCss, nested", () => {
   );
   assertEquals(
     parsed,
-    `.foo{background:blue; font-size:20px;} .foo>.bar{color:green; font-weight:bold;} .foo .buzz{color:red;}`
+    `.foo{background:blue; font-size:20px;}
+.foo>.bar{color:green; font-weight:bold;}
+.foo .buzz{color:red;}`
   );
 });
 
@@ -63,6 +65,11 @@ Deno.test("extractNestedCss, nested, with ampersand", () => {
   );
   assertEquals(
     parsed,
-    `.foo{background:blue; font-size:20px;} .foo .bar{color:purple;} .foo.buzz{color:orange;} .foo:hover{color:yellow;} .foo__inner{color:green;} .foo--active{color:lime;}`
+    `.foo{background:blue; font-size:20px;}
+.foo .bar{color:purple;}
+.foo.buzz{color:orange;}
+.foo:hover{color:yellow;}
+.foo__inner{color:green;}
+.foo--active{color:lime;}`
   );
 });
