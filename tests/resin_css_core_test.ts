@@ -1,13 +1,29 @@
 import { assertEquals } from "./deps.ts";
 import { crc32, extractNestedCss } from "../src/resin_css_core.ts";
 
+//dummy function locally used
+function css(
+  template: TemplateStringsArray,
+  ...values: (string | number)[]
+): string {
+  let text = "";
+  let i = 0;
+  for (i = 0; i < values.length; i++) {
+    text += template[i];
+    const value = values[i].toString();
+    text += value;
+  }
+  text += template[i];
+  return text;
+}
+
 Deno.test("crc32", () => {
   assertEquals(crc32("hello world"), "0d4a1185");
 });
 
 Deno.test("extractNestedCss, flat", () => {
   const parsed = extractNestedCss(
-    `
+    css`
       color: red;
       background: pink;
       font-weight: bold;
@@ -19,7 +35,7 @@ Deno.test("extractNestedCss, flat", () => {
 
 Deno.test("extractNestedCss, nested", () => {
   const parsed = extractNestedCss(
-    `
+    css`
       background: blue;
       > .bar {
         color: green;
@@ -28,7 +44,7 @@ Deno.test("extractNestedCss, nested", () => {
       .buzz {
         color: red;
       }
-      &.zoo{
+      &.zoo {
         color: pink;
       }
       font-size: 20px;
@@ -118,7 +134,7 @@ Deno.test("extractNestedCss, dirty from with comments", () => {
 
 Deno.test("extractNestedCss, nested, with ampersand", () => {
   const parsed = extractNestedCss(
-    `
+    css`
       background: blue;
       .bar {
         color: purple;
@@ -152,7 +168,7 @@ Deno.test("extractNestedCss, nested, with ampersand", () => {
 
 Deno.test("extractNestedCss, various selectors", () => {
   const parsed = extractNestedCss(
-    `
+    css`
       color: blue;
       h1 {
         color: red;
@@ -163,14 +179,14 @@ Deno.test("extractNestedCss, various selectors", () => {
       + h3 {
         color: green;
       }
-      ~ h4{
-        color: #F08;
+      ~ h4 {
+        color: #f08;
       }
       * {
-        color: #08F;
+        color: #08f;
       }
-      #bar{
-        color: #123; 
+      #bar {
+        color: #123;
       }
     `,
     ".foo"
@@ -181,15 +197,15 @@ Deno.test("extractNestedCss, various selectors", () => {
 .foo h1{color:red;}
 .foo>h2{color:yellow;}
 .foo+h3{color:green;}
-.foo~h4{color:#F08;}
-.foo *{color:#08F;}
+.foo~h4{color:#f08;}
+.foo *{color:#08f;}
 .foo #bar{color:#123;}`
   );
 });
 
 Deno.test("extractNestedCss, comma separated selectors", () => {
   const parsed = extractNestedCss(
-    `
+    css`
       color: blue;
       p,
       div,
