@@ -6,7 +6,7 @@ A lightweight css-in-js library works with Deno and Fresh.
 
 ### Styling a component
 
-Here is a basic FunctionalComponent using dom-styled.
+Here is a basic function component using dom-styled.
 
 ```tsx
 function HelloComponent() {
@@ -27,14 +27,14 @@ function HelloComponent() {
 }
 ```
 
-`css()` and `domStyled()` are core API to make the resuting vdom styled for
-FunctionalComponent. css() takes a string literal. The syntax of css text is
-basically compatible to SCSS. Multi-stage nesting is supported.
+`css()` and `domStyled()` are core API used for applying scoped css to the
+resulting vdom of function components. css() takes a string literal. The syntax
+of css text is basically compatible to SCSS. Multi-stage nesting is supported.
 
-domStyled() internally creates a unique className for the css and add the
+`domStyled()` internally creates a unique className for the css and add the
 className prop to the vdom. It also creates a converted css texts prefixed with
 the className. The css definitions are collected and they are awaiting for the
-emittion.
+emission.
 
 ### Embed collected CSS to the page
 
@@ -58,7 +58,7 @@ and all css are settled in this tag.
 
 ### Global Style
 
-If you want to write the global css, refer the code below.
+If you want to write a global css, refer the code below.
 
 ```ts
 const globalCss = css`
@@ -86,7 +86,7 @@ export default function HelloPage() {
 ```
 
 `<DomStyledGlobalStyle />` embeds given css definition to the page without
-prefix. So the definition is regarded as global scoped.
+prefix. So the definition is regarded as global-scoped.
 
 ### createFC API
 
