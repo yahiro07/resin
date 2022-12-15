@@ -1,4 +1,4 @@
-import { FunctionalComponent, JSX, h } from "preact";
+import { FunctionComponent, JSX, h } from "preact";
 import {
   crc32,
   extractCssTemplate,
@@ -48,7 +48,7 @@ function addClassToVdom(vdom: JSXElement, className: string): JSXElement {
   };
 }
 
-export const DomStyledCssEmitter: FunctionalComponent = () => {
+export const DomStyledCssEmitter: FunctionComponent = () => {
   const pageCssFullText =
     Object.values(moduleLocalStateForSsr.pageCssTexts).join("\n") + "\n";
   return h("style", { id: "dom-styled-page-css-tag" }, pageCssFullText);
@@ -98,10 +98,21 @@ export function domStyled(vdom: JSXElement, cssText: string): JSXElement {
   return addClassToVdom(vdom, className);
 }
 
-export const DomStyledGlobalStyle: FunctionalComponent<{ css: string }> = ({
+export const DomStyledGlobalStyle: FunctionComponent<{ css: string }> = ({
   css: cssText,
 }) => {
   const className = getBaseClassNameFromCssText(cssText);
   const cssOutputText = cssText.replace(new RegExp(`.${className}`, "g"), "");
   return h("style", null, cssOutputText);
 };
+
+// deno-lint-ignore ban-types
+export function createFC<T extends {}>(
+  baseFC: FunctionComponent<T>
+): FunctionComponent<T & { class?: string }> {
+  return (props: T & { class?: string }) => {
+    const { class: className, ...baseProps } = props;
+    const vdom = baseFC(baseProps as T) as JSXElement;
+    return className ? addClassToVdom(vdom, className) : vdom;
+  };
+}

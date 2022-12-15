@@ -7,7 +7,8 @@ export default function Home() {
         <title>Fresh App</title>
       </Head>
       <a href="./hello">hello</a> <br />
-      <a href="./counter">counter</a>
+      <a href="./counter">counter</a> <br />
+      <a href="./zoo">zoo</a>
     </>
   );
 }
