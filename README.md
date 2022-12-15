@@ -30,8 +30,9 @@ function HelloComponent() {
 ```
 
 `css()` and `solidify()` are core API used for applying scoped css to the
-resulting vdom of a function component. css() takes a string literal. The syntax
-of css text is basically compatible to SCSS. Multi-stage nesting is supported.
+resulting vdom of a function component. `css()` takes a string literal. The
+syntax of css text is basically compatible to SCSS. Multi-stage nesting is
+supported.
 
 `solidify()` internally creates a unique class name for the css and add the
 class prop to the vdom. It also creates a converted css texts prefixed with the
