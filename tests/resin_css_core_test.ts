@@ -28,6 +28,9 @@ Deno.test("extractNestedCss, nested", () => {
       .buzz {
         color: red;
       }
+      &.zoo{
+        color: pink;
+      }
       font-size: 20px;
     `,
     ".foo"
@@ -36,7 +39,48 @@ Deno.test("extractNestedCss, nested", () => {
     parsed,
     `.foo{background:blue; font-size:20px;}
 .foo>.bar{color:green; font-weight:bold;}
-.foo .buzz{color:red;}`
+.foo .buzz{color:red;}
+.foo.zoo{color:pink;}`
+  );
+});
+
+Deno.test("extractNestedCss, nested, single line, condensed", () => {
+  const parsed = extractNestedCss(
+    `background:blue;>.bar{color:green;font-weight:bold;}.buzz{color:red;}&.zoo{color:pink;}font-size:20px;
+    `,
+    ".foo"
+  );
+  assertEquals(
+    parsed,
+    `.foo{background:blue; font-size:20px;}
+.foo>.bar{color:green; font-weight:bold;}
+.foo .buzz{color:red;}
+.foo.zoo{color:pink;}`
+  );
+});
+
+Deno.test("extractNestedCss, nested, with useless spaces and newlines", () => {
+  const parsed = extractNestedCss(
+    `  background  :  blue  ; 
+     > .bar  {  color: green 
+      ;  font-weight  :  
+
+      bold  ; }  .buzz   
+      
+      { color:red; } & 
+      
+      .zoo { color  :  
+        pink ; } font-size 
+         : 20px  ;
+    `,
+    ".foo"
+  );
+  assertEquals(
+    parsed,
+    `.foo{background:blue; font-size:20px;}
+.foo>.bar{color:green; font-weight:bold;}
+.foo .buzz{color:red;}
+.foo.zoo{color:pink;}`
   );
 });
 

@@ -37,19 +37,29 @@ export function extractCssTemplate(
   return text;
 }
 
+function transformCssBodyTextToNormalizedLines(cssBodyText: string) {
+  return (
+    cssBodyText
+      //remove spaces
+      .replace(/\s*([:{\.;])\s*/g, (_, p1) => p1)
+      //normalize newlines
+      .replace(/\r?\n/g, "")
+      .replace(/[;{}]/g, (m) => `${m}\n`)
+      //split lines
+      .split("\n")
+      .map((a) => a.trim())
+      .filter((a) => !!a)
+      //fix cascaded selectors
+      .map((line) => line.replace(/^\./g, " ."))
+      .map((line) => line.replace(/^\&/g, ""))
+  );
+}
+
 export function extractNestedCss(
   cssBodyText: string,
   topSelector: string
 ): string {
-  const srcLines = cssBodyText
-    .split(/\r?\n/)
-    .map((line) => line.trim())
-    .filter((a) => !!a)
-    .map((line) => line.replace(/\: /g, ":"))
-    .map((line) => line.replace(/ \./g, "."))
-    .map((line) => line.replace(/ \{/g, "{"))
-    .map((line) => line.replace(/^\./g, " ."))
-    .map((line) => line.replace(/^\&/g, ""));
+  const srcLines = transformCssBodyTextToNormalizedLines(cssBodyText);
 
   const cssBlocks: Record<string, string[]> = {};
   const selectorPaths: string[] = [topSelector];
