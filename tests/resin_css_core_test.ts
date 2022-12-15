@@ -103,13 +103,13 @@ Deno.test("extractNestedCss, nested, dirty form", () => {
 Deno.test("extractNestedCss, dirty from with comments", () => {
   const parsed = extractNestedCss(
     `  background  :  blue  ; 
-     > .bar  {  color: green 
+     > .bar  {  color: green  // comment to line end
       ;  font-weight  :  
       /* blah blah */
       bold  ; }  .buzz  /*lorem ipsum*/   
       
-      { color:red; } & 
-      
+      { color:red; } &  //comment
+      //comment
       .zoo { color  :  
         pink ; /*
         Lorem ipsum dolor sit amet,

@@ -42,6 +42,7 @@ function transformCssBodyTextToNormalizedLines(cssBodyText: string) {
     cssBodyText
       //remove comments
       .replace(/\/\*.*\*\//g, "")
+      .replace(/\/\/.*\r?\n/g, "")
       //remove spaces
       .replace(/\s*([:{\.;>+~,])\s*/g, (_, p1) => p1)
       //normalize newlines
