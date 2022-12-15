@@ -40,6 +40,8 @@ export function extractCssTemplate(
 function transformCssBodyTextToNormalizedLines(cssBodyText: string) {
   return (
     cssBodyText
+      //remove comments
+      .replace(/\/\*.*\*\//g, "")
       //remove spaces
       .replace(/\s*([:{\.;])\s*/g, (_, p1) => p1)
       //normalize newlines

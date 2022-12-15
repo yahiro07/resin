@@ -59,7 +59,7 @@ Deno.test("extractNestedCss, nested, single line, condensed", () => {
   );
 });
 
-Deno.test("extractNestedCss, nested, with useless spaces and newlines", () => {
+Deno.test("extractNestedCss, nested, dirty form", () => {
   const parsed = extractNestedCss(
     `  background  :  blue  ; 
      > .bar  {  color: green 
@@ -71,6 +71,38 @@ Deno.test("extractNestedCss, nested, with useless spaces and newlines", () => {
       
       .zoo { color  :  
         pink ; } font-size 
+         : 20px  ;
+    `,
+    ".foo"
+  );
+  assertEquals(
+    parsed,
+    `.foo{background:blue; font-size:20px;}
+.foo>.bar{color:green; font-weight:bold;}
+.foo .buzz{color:red;}
+.foo.zoo{color:pink;}`
+  );
+});
+
+Deno.test("extractNestedCss, dirty from with comments", () => {
+  const parsed = extractNestedCss(
+    `  background  :  blue  ; 
+     > .bar  {  color: green 
+      ;  font-weight  :  
+      /* blah blah */
+      bold  ; }  .buzz  /*lorem ipsum*/   
+      
+      { color:red; } & 
+      
+      .zoo { color  :  
+        pink ; /*
+        Lorem ipsum dolor sit amet,
+         consectetur adipiscing elit, sed do e
+         iusmod tempor incididunt ut labore et do
+         lore magna aliqua. Ut enim ad minim veniam, 
+         quis nostrud exercitation ull
+        */
+      } font-size  
          : 20px  ;
     `,
     ".foo"
