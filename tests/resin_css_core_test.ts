@@ -1,5 +1,9 @@
 import { assertEquals } from "./deps.ts";
-import { crc32, extractNestedCss } from "../src/resin_css_core.ts";
+import {
+  combineSelectorPaths,
+  crc32,
+  extractNestedCss,
+} from "../src/resin_css_core.ts";
 
 //dummy function locally used
 function css(
@@ -475,4 +479,20 @@ Deno.test({ name: "extractNestedCss, dev10", only: false }, () => {
 .foo p:hover{color:blue;}
 .foo p>span:hover{color:green;}`
   );
+});
+
+Deno.test("combineSelectorPaths #1", () => {
+  assertEquals(combineSelectorPaths([".foo"]), ".foo");
+  assertEquals(combineSelectorPaths([".foo", ">.bar"]), ".foo>.bar");
+  assertEquals(combineSelectorPaths([".foo", " .bar"]), ".foo .bar");
+  assertEquals(combineSelectorPaths([".foo", "&.bar"]), ".foo.bar");
+  assertEquals(combineSelectorPaths([".foo", "&:hover"]), ".foo:hover");
+  assertEquals(combineSelectorPaths([".foo", "&__inner"]), ".foo__inner");
+  assertEquals(combineSelectorPaths([".foo", "&--active"]), ".foo--active");
+  assertEquals(combineSelectorPaths([".foo", "&::before"]), ".foo::before");
+  assertEquals(combineSelectorPaths([".foo", "+.bar"]), ".foo+.bar");
+  assertEquals(combineSelectorPaths([".foo", " *"]), ".foo *");
+
+  assertEquals(combineSelectorPaths([".foo", ".parent &"]), ".parent .foo");
+  assertEquals(combineSelectorPaths([".foo", "&+&"]), ".foo+.foo");
 });

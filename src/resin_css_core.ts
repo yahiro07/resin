@@ -57,7 +57,7 @@ function transformCssBodyTextToNormalizedLines(cssBodyText: string) {
   );
 }
 
-function combineSelectorPaths(selectorPaths: string[]) {
+export function combineSelectorPaths(selectorPaths: string[]) {
   if (selectorPaths.some((sel) => sel.includes("&"))) {
     const segments = selectorPaths.slice();
     for (let i = 0; i < segments.length; i++) {
