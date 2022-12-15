@@ -87,3 +87,7 @@ export default function HelloPage() {
 
 `<DomStyledGlobalStyle />` embeds given css definition to the page without
 prefix. So the definition is regarded as global scoped.
+
+## License
+
+MIT License
