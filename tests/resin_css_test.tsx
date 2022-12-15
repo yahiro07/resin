@@ -6,5 +6,5 @@ Deno.test("css", () => {
     border: solid 1px red;
     background: blue;
   `;
-  assertEquals(parsed, ".cs_0c8f8478{border:solid 1px red; background:blue;}");
+  assertEquals(parsed, "cs_0c8f8478");
 });

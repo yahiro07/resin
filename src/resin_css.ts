@@ -3,39 +3,14 @@ import {
   crc32,
   extractCssTemplate,
   extractNestedCss,
-  getBaseClassNameFromCssText,
 } from "./resin_css_core.ts";
+
+//----------
+//stateless helpers
 
 type JSXElement = JSX.Element;
 
 const IS_BROWSER = typeof document !== "undefined";
-
-const moduleLocalStateCommon = {
-  convertedCssTextCache: {} as Record<string, string>,
-};
-
-const moduleLocalStateForSsr = {
-  pageCssTexts: {} as Record<string, string>,
-};
-
-const moduleLocalStateForBrowser = {
-  pageCssClassNames: undefined as Set<string> | undefined,
-};
-
-export function css(
-  template: TemplateStringsArray,
-  ...templateParameters: (string | number)[]
-): string {
-  const { convertedCssTextCache } = moduleLocalStateCommon;
-  const inputCssText = extractCssTemplate(template, templateParameters);
-  if (!convertedCssTextCache[inputCssText]) {
-    const inputCssTextMod = inputCssText.replace(/,\r?\n/g, ",");
-    const className = `cs_${crc32(inputCssTextMod)}`;
-    const cssText = extractNestedCss(inputCssTextMod, `.${className}`);
-    convertedCssTextCache[inputCssText] = cssText;
-  }
-  return convertedCssTextCache[inputCssText];
-}
 
 function addClassToVdom(vdom: JSXElement, className: string): JSXElement {
   const originalClass = vdom.props.class;
@@ -48,10 +23,37 @@ function addClassToVdom(vdom: JSXElement, className: string): JSXElement {
   };
 }
 
-export const ResinCssEmitter: FunctionComponent = () => {
-  const pageCssFullText =
-    Object.values(moduleLocalStateForSsr.pageCssTexts).join("\n") + "\n";
-  return h("style", { id: "resin-css-page-css-tag" }, pageCssFullText);
+//----------
+//common
+
+const moduleLocalStateCommon = {
+  mapInputCssTextToClassName: {} as Record<string, string>,
+  mapClassNameToConvertedCssText: {} as Record<string, string>,
+};
+
+function getConvertedCssTextFromClassName(className: string) {
+  return moduleLocalStateCommon.mapClassNameToConvertedCssText[className];
+}
+
+function translateCssDefinitionCached(inputCssText: string): string {
+  const { mapInputCssTextToClassName, mapClassNameToConvertedCssText } =
+    moduleLocalStateCommon;
+  let className = mapInputCssTextToClassName[inputCssText];
+  if (!className) {
+    const inputCssTextMod = inputCssText.replace(/,\r?\n/g, ",");
+    className = `cs_${crc32(inputCssTextMod)}`;
+    mapInputCssTextToClassName[inputCssText] = className;
+    const convertedCssText = extractNestedCss(inputCssTextMod, `.${className}`);
+    mapClassNameToConvertedCssText[className] = convertedCssText;
+  }
+  return className;
+}
+
+//----------
+//ssr
+
+const moduleLocalStateForSsr = {
+  pageCssTexts: {} as Record<string, string>,
 };
 
 function pushCssTextToEmitterForSsr(className: string, cssText: string) {
@@ -60,6 +62,17 @@ function pushCssTextToEmitterForSsr(className: string, cssText: string) {
     pageCssTexts[className] = cssText;
   }
 }
+
+function getPageCssFullTextForSsr() {
+  return Object.values(moduleLocalStateForSsr.pageCssTexts).join("\n") + "\n";
+}
+
+//----------
+//browser
+
+const moduleLocalStateForBrowser = {
+  pageCssClassNames: undefined as Set<string> | undefined,
+};
 
 function getReginCssPageTagNode(): HTMLElement {
   const el = document.getElementById("resin-css-page-css-tag")!;
@@ -88,8 +101,20 @@ function pushCssTextToEmitterForBrowser(className: string, cssText: string) {
   }
 }
 
-export function solidify(vdom: JSXElement, cssText: string): JSXElement {
-  const className = getBaseClassNameFromCssText(cssText);
+//----------
+//entry
+
+export function css(
+  template: TemplateStringsArray,
+  ...templateParameters: (string | number)[]
+): string {
+  const inputCssText = extractCssTemplate(template, templateParameters);
+  return translateCssDefinitionCached(inputCssText);
+}
+
+export function solidify(vdom: JSXElement, css: string): JSXElement {
+  const className = css;
+  const cssText = getConvertedCssTextFromClassName(className);
   if (!IS_BROWSER) {
     pushCssTextToEmitterForSsr(className, cssText);
   } else {
@@ -98,10 +123,15 @@ export function solidify(vdom: JSXElement, cssText: string): JSXElement {
   return addClassToVdom(vdom, className);
 }
 
+export const ResinCssEmitter: FunctionComponent = () => {
+  const pageCssFullText = !IS_BROWSER ? getPageCssFullTextForSsr() : "";
+  return h("style", { id: "resin-css-page-css-tag" }, pageCssFullText);
+};
+
 export const ResinCssGlobalStyle: FunctionComponent<{ css: string }> = ({
-  css: cssText,
+  css: className,
 }) => {
-  const className = getBaseClassNameFromCssText(cssText);
+  const cssText = getConvertedCssTextFromClassName(className);
   const cssOutputText = cssText.replace(new RegExp(`.${className}`, "g"), "");
   return h("style", null, cssOutputText);
 };

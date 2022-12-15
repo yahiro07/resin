@@ -1,7 +1,7 @@
 {
   "tasks": {
     "test": "deno test",
-    "dev_app1": "cd examples/app1 && deno task start"
+    "dev": "cd examples/app1 && deno task start"
   },
   "importMap": "./.vscode/import_map.json",
   "compilerOptions": {
