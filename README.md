@@ -31,9 +31,9 @@ function HelloComponent() {
 resulting vdom of a function component. css() takes a string literal. The syntax
 of css text is basically compatible to SCSS. Multi-stage nesting is supported.
 
-`solidify()` internally creates a unique className for the css and add the
-className prop to the vdom. It also creates a converted css texts prefixed with
-the className. The css definitions are collected and they are awaiting for the
+`solidify()` internally creates a unique class name for the css and add the
+class prop to the vdom. It also creates a converted css texts prefixed with the
+class selector. The css definitions are collected and they are awaiting for the
 emission.
 
 ### Embed collected CSS to the page
