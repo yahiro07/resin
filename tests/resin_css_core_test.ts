@@ -241,3 +241,43 @@ Deno.test("extractNestedCss, cascaded nesting", () => {
 .foo h1 p span{color:blue;}`
   );
 });
+
+Deno.test("extractNestedCss, dev1", () => {
+  const parsed = extractNestedCss(
+    css`
+      h3 + p {
+        color: red;
+      }
+    `,
+    ".foo"
+  );
+  //TODO: study what's expected
+  // assertEquals(parsed, `.foo h3+.foo p{color:red}`);
+});
+
+Deno.test("extractNestedCss, dev2", () => {
+  const parsed = extractNestedCss(
+    css`
+      p:first-child {
+        color: red;
+      }
+      p:not(.text) {
+        color: blue;
+      }
+      h1::before {
+        color: green;
+      }
+      input[type="text"] {
+        color: orange;
+      }
+    `,
+    ".foo"
+  );
+  assertEquals(
+    parsed,
+    `.foo p:first-child{color:red;}
+.foo p:not(.text){color:blue;}
+.foo h1::before{color:green;}
+.foo input[type="text"]{color:orange;}`
+  );
+});
