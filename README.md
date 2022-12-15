@@ -28,7 +28,7 @@ function HelloComponent() {
 ```
 
 `css()` and `domStyled()` are core API used for applying scoped css to the
-resulting vdom of function components. css() takes a string literal. The syntax
+resulting vdom of a function component. css() takes a string literal. The syntax
 of css text is basically compatible to SCSS. Multi-stage nesting is supported.
 
 `domStyled()` internally creates a unique className for the css and add the
