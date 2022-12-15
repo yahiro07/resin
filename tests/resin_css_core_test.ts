@@ -186,3 +186,23 @@ Deno.test("extractNestedCss, various selectors", () => {
 .foo #bar{color:#123;}`
   );
 });
+
+Deno.test("extractNestedCss, comma separated selectors", () => {
+  const parsed = extractNestedCss(
+    `
+      color: blue;
+      p,
+      div,
+      .class,
+      #id {
+        color: red;
+      }
+    `,
+    ".foo"
+  );
+  assertEquals(
+    parsed,
+    `.foo{color:blue;}
+.foo p,div,.class,#id{color:red;}`
+  );
+});

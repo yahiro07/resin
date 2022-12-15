@@ -43,7 +43,7 @@ function transformCssBodyTextToNormalizedLines(cssBodyText: string) {
       //remove comments
       .replace(/\/\*.*\*\//g, "")
       //remove spaces
-      .replace(/\s*([:{\.;>+~])\s*/g, (_, p1) => p1)
+      .replace(/\s*([:{\.;>+~,])\s*/g, (_, p1) => p1)
       //normalize newlines
       .replace(/\r?\n/g, "")
       .replace(/[;{}]/g, (m) => `${m}\n`)
@@ -62,6 +62,8 @@ export function extractNestedCss(
   topSelector: string
 ): string {
   const srcLines = transformCssBodyTextToNormalizedLines(cssBodyText);
+
+  // console.log({ srcLines });
 
   const cssBlocks: Record<string, string[]> = {};
   const selectorPaths: string[] = [topSelector];
