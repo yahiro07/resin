@@ -1,5 +1,7 @@
 # resin-css
 
+<img align="right" src="./resin_logo.svg" height="140px" alt="the resin logo: two bottles labeled CSS and JS">
+
 A lightweight css-in-js library works with Deno and Fresh.
 
 ## Usage
