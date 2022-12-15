@@ -149,3 +149,40 @@ Deno.test("extractNestedCss, nested, with ampersand", () => {
 .foo--active{color:lime;}`
   );
 });
+
+Deno.test("extractNestedCss, various selectors", () => {
+  const parsed = extractNestedCss(
+    `
+      color: blue;
+      h1 {
+        color: red;
+      }
+      > h2 {
+        color: yellow;
+      }
+      + h3 {
+        color: green;
+      }
+      ~ h4{
+        color: #F08;
+      }
+      * {
+        color: #08F;
+      }
+      #bar{
+        color: #123; 
+      }
+    `,
+    ".foo"
+  );
+  assertEquals(
+    parsed,
+    `.foo{color:blue;}
+.foo h1{color:red;}
+.foo>h2{color:yellow;}
+.foo+h3{color:green;}
+.foo~h4{color:#F08;}
+.foo *{color:#08F;}
+.foo #bar{color:#123;}`
+  );
+});

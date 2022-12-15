@@ -43,7 +43,7 @@ function transformCssBodyTextToNormalizedLines(cssBodyText: string) {
       //remove comments
       .replace(/\/\*.*\*\//g, "")
       //remove spaces
-      .replace(/\s*([:{\.;])\s*/g, (_, p1) => p1)
+      .replace(/\s*([:{\.;>+~])\s*/g, (_, p1) => p1)
       //normalize newlines
       .replace(/\r?\n/g, "")
       .replace(/[;{}]/g, (m) => `${m}\n`)
@@ -52,7 +52,7 @@ function transformCssBodyTextToNormalizedLines(cssBodyText: string) {
       .map((a) => a.trim())
       .filter((a) => !!a)
       //fix cascaded selectors
-      .map((line) => line.replace(/^\./g, " ."))
+      .map((line) => line.replace(/^[\w.*#].*\{$/g, (m) => ` ${m}`))
       .map((line) => line.replace(/^\&/g, ""))
   );
 }
