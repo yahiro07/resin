@@ -222,3 +222,22 @@ Deno.test("extractNestedCss, comma separated selectors", () => {
 .foo p,div,.class,#id{color:red;}`
   );
 });
+
+Deno.test("extractNestedCss, cascaded nesting", () => {
+  const parsed = extractNestedCss(
+    css`
+      > div > p > span {
+        color: red;
+      }
+      h1 p span {
+        color: blue;
+      }
+    `,
+    ".foo"
+  );
+  assertEquals(
+    parsed,
+    `.foo>div>p>span{color:red;}
+.foo h1 p span{color:blue;}`
+  );
+});
