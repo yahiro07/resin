@@ -255,8 +255,7 @@ Deno.test("extractNestedCss, dev1", () => {
     `,
     ".foo"
   );
-  //TODO: study what's expected
-  // assertEquals(parsed, `.foo h3+.foo p{color:red}`);
+  assertEquals(parsed, `.foo h3+p{color:red;}`);
 });
 
 Deno.test("extractNestedCss, dev2", () => {
