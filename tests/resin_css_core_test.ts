@@ -425,3 +425,54 @@ Deno.test("extractNestedCss, dev8", () => {
 .foo [data-active="true"]{color:yellow;}`
   );
 });
+
+Deno.test("extractNestedCss, dev9", () => {
+  const parsed = extractNestedCss(
+    css`
+      > p {
+        color: red;
+        + p {
+          color: blue;
+        }
+      }
+    `,
+    ".foo"
+  );
+  assertEquals(
+    parsed,
+    `.foo>p{color:red;}
+.foo>p+p{color:blue;}`
+  );
+});
+
+Deno.test({ name: "extractNestedCss, dev10", only: false }, () => {
+  const parsed = extractNestedCss(
+    css`
+      :hover {
+        color: yellow;
+      }
+      &:hover {
+        color: black;
+      }
+
+      p {
+        &:hover {
+          color: blue;
+        }
+        > span {
+          &:hover {
+            color: green;
+          }
+        }
+      }
+    `,
+    ".foo"
+  );
+  assertEquals(
+    parsed,
+    `.foo :hover{color:yellow;}
+.foo:hover{color:black;}
+.foo p:hover{color:blue;}
+.foo p>span:hover{color:green;}`
+  );
+});

@@ -53,23 +53,22 @@ function transformCssBodyTextToNormalizedLines(cssBodyText: string) {
       .map((a) => a.trim())
       .filter((a) => !!a)
       //fix cascaded selectors
-      .map((line) => line.replace(/^[\w.*#\[].*\{$/g, (m) => ` ${m}`))
-    // .map((line) => line.replace(/^\&/g, ""))
+      .map((line) => line.replace(/^[\w.*#\[:].*\{$/g, (m) => ` ${m}`))
   );
 }
 
 function combineSelectorPaths(selectorPaths: string[]) {
   if (selectorPaths.some((sel) => sel.includes("&"))) {
-    return selectorPaths
-      .map((sel, i) => {
-        if (i >= 1 && sel.includes("&")) {
-          const parent = selectorPaths[i - 1];
-          return sel.replace(/\&/g, parent).trim();
-        }
-        return sel;
-      })
-      .slice(1)
-      .join("");
+    const segments = selectorPaths.slice();
+    for (let i = 0; i < segments.length; i++) {
+      const idx = segments[i].indexOf("&");
+      if (i >= 1 && idx >= 0) {
+        const parent = segments[i - 1];
+        segments[i] = segments[i].replace(/&/g, parent);
+        segments[i - 1] = "";
+      }
+    }
+    return segments.join("").trim();
   } else {
     return selectorPaths.join("");
   }
@@ -93,6 +92,7 @@ export function extractNestedCss(
       selectorPaths.pop();
     } else {
       const selectorPath = combineSelectorPaths(selectorPaths);
+      // console.log({ selectorPaths, selectorPath });
       if (!cssBlocks[selectorPath]) {
         cssBlocks[selectorPath] = [];
       }
