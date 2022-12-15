@@ -6,6 +6,18 @@ A lightweight css-in-js library works with Deno and Fresh.
 
 ## Usage
 
+### import
+
+```ts
+import {
+  css,
+  ResinCssEmitter,
+  solidify,
+} from "https://github.com/yahiro07/resin-css/mod.ts";
+```
+
+Just reference the code from your Deno+Fresh app. No configurations required.
+
 ### Styling a component
 
 Here is a basic function component using resin-css.
