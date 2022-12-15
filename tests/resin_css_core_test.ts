@@ -151,6 +151,9 @@ Deno.test("extractNestedCss, nested, with ampersand", () => {
       &--active {
         color: lime;
       }
+      &::after {
+        color: violet;
+      }
       font-size: 20px;
     `,
     ".foo"
@@ -162,7 +165,8 @@ Deno.test("extractNestedCss, nested, with ampersand", () => {
 .foo.buzz{color:orange;}
 .foo:hover{color:yellow;}
 .foo__inner{color:green;}
-.foo--active{color:lime;}`
+.foo--active{color:lime;}
+.foo::after{color:violet;}`
   );
 });
 
@@ -280,4 +284,117 @@ Deno.test("extractNestedCss, dev2", () => {
 .foo h1::before{color:green;}
 .foo input[type="text"]{color:orange;}`
   );
+});
+
+Deno.test("extractNestedCss, dev3, multilevel nesting", () => {
+  const parsed = extractNestedCss(
+    css`
+      color: white;
+      .bar {
+        color: red;
+        .buzz {
+          color: green;
+          .boo {
+            color: blue;
+          }
+        }
+      }
+    `,
+    ".foo"
+  );
+  assertEquals(
+    parsed,
+    `.foo{color:white;}
+.foo .bar{color:red;}
+.foo .bar .buzz{color:green;}
+.foo .bar .buzz .boo{color:blue;}`
+  );
+});
+
+Deno.test("extractNestedCss, dev4, multilevel nesting", () => {
+  const parsed = extractNestedCss(
+    css`
+      color: white;
+      > .bar {
+        color: red;
+        > .buzz {
+          color: green;
+          > .boo {
+            color: blue;
+          }
+        }
+      }
+    `,
+    ".foo"
+  );
+  assertEquals(
+    parsed,
+    `.foo{color:white;}
+.foo>.bar{color:red;}
+.foo>.bar>.buzz{color:green;}
+.foo>.bar>.buzz>.boo{color:blue;}`
+  );
+});
+
+Deno.test("extractNestedCss, dev5", () => {
+  const parsed = extractNestedCss(
+    css`
+      div {
+        color: white;
+        + div {
+          color: red;
+        }
+        > h1 {
+          color: blue;
+        }
+      }
+    `,
+    ".foo"
+  );
+  assertEquals(
+    parsed,
+    `.foo div{color:white;}
+.foo div+div{color:red;}
+.foo div>h1{color:blue;}`
+  );
+});
+
+Deno.test("extractNestedCss, dev6", () => {
+  const parsed = extractNestedCss(
+    css`
+      width: 1200px;
+      @media screen and (max-width: 640px) {
+        width: 100%;
+      }
+    `,
+    ".foo"
+  );
+  //TODO: support media query
+  //   assertEquals(
+  //     parsed,
+  //     `.foo{width: 1200px;}
+  // @media screen and (max-width: 640px) {
+  // .foo{width: 100%;}`
+  //   );
+});
+
+Deno.test("extractNestedCss, dev7", () => {
+  const parsed = extractNestedCss(
+    css`
+      color: red;
+      .parent & {
+        color: blue;
+      }
+      & + & {
+        color: green;
+      }
+    `,
+    ".foo"
+  );
+  // assertEquals(
+  //   parsed,
+  //   `.foo{color:red;}
+  // .parent .foo{color:blue;}
+  // .foo+.foo{color:green;}`
+  // );
 });
