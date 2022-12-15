@@ -1,13 +1,8 @@
 import { Head } from "$fresh/runtime.ts";
-import {
-  css,
-  domStyled,
-  DomStyledCssEmitter,
-  createFC,
-} from "dom-styled/mod.ts";
+import { css, solidify, ResinCssEmitter, createFC } from "resin-css/mod.ts";
 
 const AnimalSprite = createFC<{ iconText: string }>((props) => {
-  return domStyled(
+  return solidify(
     <div>{props.iconText}</div>,
     css`
       font-size: 200px;
@@ -16,7 +11,7 @@ const AnimalSprite = createFC<{ iconText: string }>((props) => {
 });
 
 function ZooComponent() {
-  return domStyled(
+  return solidify(
     <div>
       <AnimalSprite iconText="🐈" class="cat" />
       <AnimalSprite iconText="🐇" class="rabbit" />
@@ -53,7 +48,7 @@ export default function ZooPage() {
     <>
       <Head>
         <title>Fresh App</title>
-        <DomStyledCssEmitter />
+        <ResinCssEmitter />
       </Head>
       <ZooComponent />
     </>

@@ -1,4 +1,4 @@
-# dom-styled
+# resin-css
 
 A lightweight css-in-js library works with Deno and Fresh.
 
@@ -6,11 +6,11 @@ A lightweight css-in-js library works with Deno and Fresh.
 
 ### Styling a component
 
-Here is a basic function component using dom-styled.
+Here is a basic function component using resin-css.
 
 ```tsx
 function HelloComponent() {
-  return domStyled(
+  return solidify(
     <div>
       <span class="sun">🔆</span>
       Hello World
@@ -27,11 +27,11 @@ function HelloComponent() {
 }
 ```
 
-`css()` and `domStyled()` are core API used for applying scoped css to the
+`css()` and `solidify()` are core API used for applying scoped css to the
 resulting vdom of a function component. css() takes a string literal. The syntax
 of css text is basically compatible to SCSS. Multi-stage nesting is supported.
 
-`domStyled()` internally creates a unique className for the css and add the
+`solidify()` internally creates a unique className for the css and add the
 className prop to the vdom. It also creates a converted css texts prefixed with
 the className. The css definitions are collected and they are awaiting for the
 emission.
@@ -44,7 +44,7 @@ export default function HelloPage() {
     <>
       <Head>
         <title>Fresh App</title>
-        <DomStyledCssEmitter />
+        <ResinCssEmitter />
       </Head>
       <HelloComponent />
     </>
@@ -52,9 +52,9 @@ export default function HelloPage() {
 }
 ```
 
-Here is a page component for a route. `<DomStyledCssEmitter />` embeds the
-collected css definitions into `<head>` tag. A single `<style>` tag is created
-and all css are settled in this tag.
+Here is a page component for a route. `<ResinCssEmitter />` embeds the collected
+css definitions into `<head>` tag. A single `<style>` tag is created and all css
+are settled in this tag.
 
 ### Global Style
 
@@ -77,7 +77,7 @@ export default function HelloPage() {
     <>
       <Head>
         <title>Fresh App</title>
-        <DomStyledGlobalStyle css={globalCss} />
+        <ResinCssGlobalStyle css={globalCss} />
       </Head>
       <HelloComponent />
     </>
@@ -85,7 +85,7 @@ export default function HelloPage() {
 }
 ```
 
-`<DomStyledGlobalStyle />` embeds given css definition to the page without
+`<ResinCssGlobalStyle />` embeds given css definition to the page without
 prefix. So the definition is regarded as global-scoped.
 
 ### createFC API
@@ -97,7 +97,7 @@ of child elements in the parent context.
 ```ts
 //create wrapped component, it accepts additional class prop
 const AnimalSprite = createFC<{ iconText: string }>((props) => {
-  return domStyled(
+  return solidify(
     <div>{props.iconText}</div>,
     css`
       font-size: 200px;
@@ -107,7 +107,7 @@ const AnimalSprite = createFC<{ iconText: string }>((props) => {
 
 function ZooComponent() {
   //apply customized style to children in parent component
-  return domStyled(
+  return solidify(
     <div>
       <AnimalSprite iconText="🐈" class="cat" />
       <AnimalSprite iconText="🐇" class="rabbit" />

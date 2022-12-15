@@ -1,9 +1,9 @@
 import { JSX } from "preact";
 import { IS_BROWSER } from "$fresh/runtime.ts";
-import { css, domStyled } from "../../../mod.ts";
+import { css, solidify } from "resin-css/mod.ts";
 
 export function Button(props: JSX.HTMLAttributes<HTMLButtonElement>) {
-  return domStyled(
+  return solidify(
     <button {...props} disabled={!IS_BROWSER || props.disabled} />,
     css`
       width: 60px;

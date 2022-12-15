@@ -4,7 +4,7 @@ import {
   extractCssTemplate,
   extractNestedCss,
   getBaseClassNameFromCssText,
-} from "./dom_styled_core.ts";
+} from "./resin_css_core.ts";
 
 type JSXElement = JSX.Element;
 
@@ -48,10 +48,10 @@ function addClassToVdom(vdom: JSXElement, className: string): JSXElement {
   };
 }
 
-export const DomStyledCssEmitter: FunctionComponent = () => {
+export const ResinCssEmitter: FunctionComponent = () => {
   const pageCssFullText =
     Object.values(moduleLocalStateForSsr.pageCssTexts).join("\n") + "\n";
-  return h("style", { id: "dom-styled-page-css-tag" }, pageCssFullText);
+  return h("style", { id: "resin-css-page-css-tag" }, pageCssFullText);
 };
 
 function pushCssTextToEmitterForSsr(className: string, cssText: string) {
@@ -61,10 +61,10 @@ function pushCssTextToEmitterForSsr(className: string, cssText: string) {
   }
 }
 
-function getDomStyledPageCssTagNode(): HTMLElement {
-  const el = document.getElementById("dom-styled-page-css-tag")!;
+function getReginCssPageTagNode(): HTMLElement {
+  const el = document.getElementById("resin-css-page-css-tag")!;
   if (!el) {
-    throw new Error(`page css tag not found for dom-styled`);
+    throw new Error(`page css tag not found for resin-css`);
   }
   return el;
 }
@@ -73,7 +73,7 @@ function pushCssTextToEmitterForBrowser(className: string, cssText: string) {
   const sb = moduleLocalStateForBrowser;
   if (!sb.pageCssClassNames) {
     sb.pageCssClassNames = new Set();
-    const el = getDomStyledPageCssTagNode();
+    const el = getReginCssPageTagNode();
     const matches = el.innerHTML.match(/cs_[\w]{8}/g);
     if (matches) {
       for (const m of matches) {
@@ -82,13 +82,13 @@ function pushCssTextToEmitterForBrowser(className: string, cssText: string) {
     }
   }
   if (!sb.pageCssClassNames.has(className)) {
-    const el = getDomStyledPageCssTagNode();
+    const el = getReginCssPageTagNode();
     el.innerHTML += cssText;
     sb.pageCssClassNames.add(className);
   }
 }
 
-export function domStyled(vdom: JSXElement, cssText: string): JSXElement {
+export function solidify(vdom: JSXElement, cssText: string): JSXElement {
   const className = getBaseClassNameFromCssText(cssText);
   if (!IS_BROWSER) {
     pushCssTextToEmitterForSsr(className, cssText);
@@ -98,7 +98,7 @@ export function domStyled(vdom: JSXElement, cssText: string): JSXElement {
   return addClassToVdom(vdom, className);
 }
 
-export const DomStyledGlobalStyle: FunctionComponent<{ css: string }> = ({
+export const ResinCssGlobalStyle: FunctionComponent<{ css: string }> = ({
   css: cssText,
 }) => {
   const className = getBaseClassNameFromCssText(cssText);

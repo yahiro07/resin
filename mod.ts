@@ -1,1 +1,1 @@
-export * from "./src/dom_styled.ts";
+export * from "./src/resin_css.ts";

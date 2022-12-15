@@ -1,5 +1,5 @@
 import { assertEquals } from "./deps.ts";
-import { css } from "../src/dom_styled.ts";
+import { css } from "../src/resin_css.ts";
 
 Deno.test("css", () => {
   const parsed = css`

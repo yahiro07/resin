@@ -1,10 +1,10 @@
 import { Head } from "$fresh/runtime.ts";
 import {
   css,
-  domStyled,
-  DomStyledCssEmitter,
-  DomStyledGlobalStyle,
-} from "dom-styled/mod.ts";
+  solidify,
+  ResinCssEmitter,
+  ResinCssGlobalStyle,
+} from "resin-css/mod.ts";
 
 //define global style
 const globalCss = css`
@@ -20,7 +20,7 @@ const globalCss = css`
 
 function HelloComponent() {
   //attach css to the resulting vdom of FunctionalComponent
-  return domStyled(
+  return solidify(
     <div>
       <span class="sun">🔆</span>
       Hello World
@@ -43,9 +43,9 @@ export default function HelloPage() {
       <Head>
         <title>Fresh App</title>
         {/* embed global style */}
-        <DomStyledGlobalStyle css={globalCss} />
-        {/* embed collected css definitions passed to domStyled() */}
-        <DomStyledCssEmitter />
+        <ResinCssGlobalStyle css={globalCss} />
+        {/* embed collected css definitions passed to solidify() */}
+        <ResinCssEmitter />
       </Head>
       <HelloComponent />
     </>

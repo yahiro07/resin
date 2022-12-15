@@ -2,10 +2,10 @@ import { Head } from "$fresh/runtime.ts";
 import Counter from "../islands/Counter.tsx";
 import {
   css,
-  domStyled,
-  DomStyledCssEmitter,
-  DomStyledGlobalStyle,
-} from "dom-styled/mod.ts";
+  solidify,
+  ResinCssEmitter,
+  ResinCssGlobalStyle,
+} from "resin-css/mod.ts";
 
 const globalCss = css`
   * {
@@ -20,7 +20,7 @@ const globalCss = css`
 `;
 
 function PageContent() {
-  return domStyled(
+  return solidify(
     <div>
       <div class="panel">
         <p class="hello">Hello World!!</p>
@@ -60,8 +60,8 @@ export default function CounterPage() {
     <>
       <Head>
         <title>Fresh App</title>
-        <DomStyledGlobalStyle css={globalCss} />
-        <DomStyledCssEmitter />
+        <ResinCssGlobalStyle css={globalCss} />
+        <ResinCssEmitter />
       </Head>
       <PageContent />
     </>

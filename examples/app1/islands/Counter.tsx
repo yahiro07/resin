@@ -1,5 +1,5 @@
 import { useState } from "preact/hooks";
-import { css, domStyled } from "../../../mod.ts";
+import { css, solidify } from "resin-css/mod.ts";
 import { Button } from "../components/Button.tsx";
 
 interface CounterProps {
@@ -8,7 +8,7 @@ interface CounterProps {
 
 export default function Counter(props: CounterProps) {
   const [count, setCount] = useState(props.start);
-  return domStyled(
+  return solidify(
     <div>
       <div class="text-part">
         <p>{count}</p>
