@@ -211,15 +211,22 @@ Deno.test("extractNestedCss, various selectors", () => {
   );
 });
 
-Deno.test("extractNestedCss, comma separated selectors", () => {
+Deno.test("extractNestedCss, selector list", () => {
   const parsed = extractNestedCss(
     css`
       color: blue;
       p,
       div,
-      .class,
-      #id {
+      span {
         color: red;
+      }
+
+      .aa,
+      .bb {
+        .cc,
+        .dd {
+          color: yellow;
+        }
       }
     `,
     ".foo"
@@ -227,7 +234,8 @@ Deno.test("extractNestedCss, comma separated selectors", () => {
   assertEquals(
     parsed,
     `.foo{color:blue;}
-.foo p,div,.class,#id{color:red;}`
+.foo p,.foo div,.foo span{color:red;}
+.foo .aa .cc,.foo .aa .dd,.foo .bb .cc,.foo .bb .dd{color:red;}`
   );
 });
 
@@ -481,7 +489,7 @@ Deno.test({ name: "extractNestedCss, dev10", only: false }, () => {
   );
 });
 
-Deno.test("combineSelectorPaths #1", () => {
+Deno.test({ name: "combineSelectorPaths #1", only: false }, () => {
   assertEquals(combineSelectorPaths([".foo"]), ".foo");
   assertEquals(combineSelectorPaths([".foo", ">.bar"]), ".foo>.bar");
   assertEquals(combineSelectorPaths([".foo", " .bar"]), ".foo .bar");
@@ -510,3 +518,21 @@ Deno.test("combineSelectorPaths #1", () => {
   );
   assertEquals(combineSelectorPaths(["#main", ">p"]), "#main>p");
 });
+
+Deno.test(
+  { name: "combineSelectorPaths #2, selector list", only: true },
+  () => {
+    assertEquals(
+      combineSelectorPaths([".base", "p,div,span"]),
+      ".base p,.base div, .base span"
+    );
+    assertEquals(
+      combineSelectorPaths([".base", ">p,>div,>span"]),
+      ".base>p,.base>div, .base>span"
+    );
+    assertEquals(
+      combineSelectorPaths([".base", ".aa,.bb", ".cc,.dd"]),
+      ".base .aa .cc,.base .aa .dd,.base .bb .cc,.base .bb .dd"
+    );
+  }
+);
