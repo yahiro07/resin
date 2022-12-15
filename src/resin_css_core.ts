@@ -54,8 +54,25 @@ function transformCssBodyTextToNormalizedLines(cssBodyText: string) {
       .filter((a) => !!a)
       //fix cascaded selectors
       .map((line) => line.replace(/^[\w.*#\[].*\{$/g, (m) => ` ${m}`))
-      .map((line) => line.replace(/^\&/g, ""))
+    // .map((line) => line.replace(/^\&/g, ""))
   );
+}
+
+function combineSelectorPaths(selectorPaths: string[]) {
+  if (selectorPaths.some((sel) => sel.includes("&"))) {
+    return selectorPaths
+      .map((sel, i) => {
+        if (i >= 1 && sel.includes("&")) {
+          const parent = selectorPaths[i - 1];
+          return sel.replace(/\&/g, parent).trim();
+        }
+        return sel;
+      })
+      .slice(1)
+      .join("");
+  } else {
+    return selectorPaths.join("");
+  }
 }
 
 export function extractNestedCss(
@@ -75,8 +92,7 @@ export function extractNestedCss(
     } else if (line.endsWith("}")) {
       selectorPaths.pop();
     } else {
-      const selectorPath = selectorPaths.join("").replace(/ &/g, "");
-
+      const selectorPath = combineSelectorPaths(selectorPaths);
       if (!cssBlocks[selectorPath]) {
         cssBlocks[selectorPath] = [];
       }

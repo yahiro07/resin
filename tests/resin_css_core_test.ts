@@ -377,26 +377,29 @@ Deno.test("extractNestedCss, dev6", () => {
   //   );
 });
 
-Deno.test("extractNestedCss, dev7", () => {
-  const parsed = extractNestedCss(
-    css`
-      color: red;
-      .parent & {
-        color: blue;
-      }
-      & + & {
-        color: green;
-      }
-    `,
-    ".foo"
-  );
-  // assertEquals(
-  //   parsed,
-  //   `.foo{color:red;}
-  // .parent .foo{color:blue;}
-  // .foo+.foo{color:green;}`
-  // );
-});
+Deno.test(
+  { name: "extractNestedCss, dev7, specify parent", only: false },
+  () => {
+    const parsed = extractNestedCss(
+      css`
+        color: red;
+        .parent & {
+          color: blue;
+        }
+        & + & {
+          color: green;
+        }
+      `,
+      ".foo"
+    );
+    assertEquals(
+      parsed,
+      `.foo{color:red;}
+.parent .foo{color:blue;}
+.foo+.foo{color:green;}`
+    );
+  }
+);
 
 Deno.test("extractNestedCss, dev8", () => {
   const parsed = extractNestedCss(
