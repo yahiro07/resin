@@ -495,4 +495,18 @@ Deno.test("combineSelectorPaths #1", () => {
 
   assertEquals(combineSelectorPaths([".foo", ".parent &"]), ".parent .foo");
   assertEquals(combineSelectorPaths([".foo", "&+&"]), ".foo+.foo");
+
+  assertEquals(
+    combineSelectorPaths([".box", "& &__element"]),
+    ".box .box__element"
+  );
+  assertEquals(
+    combineSelectorPaths([".box", "& &__element", "&--modifier"]),
+    ".box .box__element--modifier"
+  );
+  assertEquals(
+    combineSelectorPaths(["#main", " span", "+span"]),
+    "#main span+span"
+  );
+  assertEquals(combineSelectorPaths(["#main", ">p"]), "#main>p");
 });
