@@ -62,9 +62,6 @@ export function extractNestedCss(
   topSelector: string
 ): string {
   const srcLines = transformCssBodyTextToNormalizedLines(cssBodyText);
-
-  // console.log({ srcLines });
-
   const cssBlocks: Record<string, string[]> = {};
   const selectorPaths: string[] = [topSelector];
 
