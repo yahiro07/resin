@@ -52,7 +52,7 @@ function transformCssBodyTextToNormalizedLines(cssBodyText: string) {
       .map((a) => a.trim())
       .filter((a) => !!a)
       //fix cascaded selectors
-      .map((line) => line.replace(/^[\w.*#].*\{$/g, (m) => ` ${m}`))
+      .map((line) => line.replace(/^[\w.*#\[].*\{$/g, (m) => ` ${m}`))
       .map((line) => line.replace(/^\&/g, ""))
   );
 }
@@ -62,6 +62,8 @@ export function extractNestedCss(
   topSelector: string
 ): string {
   const srcLines = transformCssBodyTextToNormalizedLines(cssBodyText);
+  // console.log({ srcLines });
+
   const cssBlocks: Record<string, string[]> = {};
   const selectorPaths: string[] = [topSelector];
 

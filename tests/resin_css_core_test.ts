@@ -397,3 +397,28 @@ Deno.test("extractNestedCss, dev7", () => {
   // .foo+.foo{color:green;}`
   // );
 });
+
+Deno.test("extractNestedCss, dev8", () => {
+  const parsed = extractNestedCss(
+    css`
+      color: red;
+      .bar[data-active="true"] {
+        color: blue;
+      }
+      &[data-active="true"] {
+        color: green;
+      }
+      [data-active="true"] {
+        color: yellow;
+      }
+    `,
+    ".foo"
+  );
+  assertEquals(
+    parsed,
+    `.foo{color:red;}
+.foo .bar[data-active="true"]{color:blue;}
+.foo[data-active="true"]{color:green;}
+.foo [data-active="true"]{color:yellow;}`
+  );
+});
