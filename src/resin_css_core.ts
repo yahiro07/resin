@@ -52,25 +52,27 @@ function transformCssBodyTextToNormalizedLines(cssBodyText: string) {
       .split("\n")
       .map((a) => a.trim())
       .filter((a) => !!a)
-      //fix cascaded selectors
-      .map((line) => line.replace(/^[\w.*#\[:].*\{$/g, (m) => ` ${m}`))
   );
 }
 
+export function connectPathSegment(path: string, inputSeg: string) {
+  let seg = inputSeg;
+  if (seg.match(/^[a-zA-Z.#*\[:]/)) {
+    seg = ` ${seg}`;
+  }
+  if (seg.includes("&")) {
+    return seg.replace(/&/g, path).trim();
+  }
+  return path + seg;
+}
+
 export function combineSelectorPaths(selectorPaths: string[]) {
-  if (selectorPaths.some((sel) => sel.includes("&"))) {
-    const segments = selectorPaths.slice();
-    for (let i = 0; i < segments.length; i++) {
-      const idx = segments[i].indexOf("&");
-      if (i >= 1 && idx >= 0) {
-        const parent = segments[i - 1];
-        segments[i] = segments[i].replace(/&/g, parent);
-        segments[i - 1] = "";
-      }
-    }
-    return segments.join("").trim();
+  if (selectorPaths.length >= 2) {
+    const head = selectorPaths[0];
+    const tails = selectorPaths.slice(1);
+    return tails.reduce(connectPathSegment, head);
   } else {
-    return selectorPaths.join("");
+    return selectorPaths[0];
   }
 }
 

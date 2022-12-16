@@ -1,6 +1,7 @@
 import { assertEquals } from "./deps.ts";
 import {
   combineSelectorPaths,
+  connectPathSegment,
   crc32,
   extractNestedCss,
 } from "../src/resin_css_core.ts";
@@ -489,17 +490,52 @@ Deno.test({ name: "extractNestedCss, dev10", only: false }, () => {
   );
 });
 
+Deno.test({ name: "connectPathSegment #1", only: false }, () => {
+  // assertEquals(connectPathSegment([".foo"]), ".foo");
+  assertEquals(connectPathSegment(".foo", ">.bar"), ".foo>.bar");
+  assertEquals(connectPathSegment(".foo", "+.bar"), ".foo+.bar");
+  assertEquals(connectPathSegment(".foo", "&.bar"), ".foo.bar");
+  assertEquals(connectPathSegment(".foo", ".bar"), ".foo .bar");
+  assertEquals(connectPathSegment("div", "h1"), "div h1");
+  assertEquals(connectPathSegment(".foo", "*"), ".foo *");
+  assertEquals(
+    connectPathSegment("input", `&[type="number"]`),
+    `input[type="number"]`
+  );
+  assertEquals(
+    connectPathSegment("input", `[type="number"]`),
+    `input [type="number"]`
+  );
+  assertEquals(connectPathSegment(".foo", ".parent &"), ".parent .foo");
+  assertEquals(connectPathSegment(".foo", "&+&"), ".foo+.foo");
+
+  assertEquals(connectPathSegment(".foo .bar", "&:buzz"), ".foo .bar:buzz");
+  assertEquals(connectPathSegment(".foo>.bar", "&+&"), ".foo>.bar+.foo>.bar");
+  assertEquals(connectPathSegment(".foo .bar", "&+&"), ".foo .bar+.foo .bar");
+  assertEquals(
+    connectPathSegment(".foo .bar", ".parent+&"),
+    ".parent+.foo .bar"
+  );
+  assertEquals(
+    connectPathSegment(".box", "& &__element"),
+    ".box .box__element"
+  );
+});
+
 Deno.test({ name: "combineSelectorPaths #1", only: false }, () => {
   assertEquals(combineSelectorPaths([".foo"]), ".foo");
   assertEquals(combineSelectorPaths([".foo", ">.bar"]), ".foo>.bar");
-  assertEquals(combineSelectorPaths([".foo", " .bar"]), ".foo .bar");
+  assertEquals(combineSelectorPaths([".foo", ".bar"]), ".foo .bar");
   assertEquals(combineSelectorPaths([".foo", "&.bar"]), ".foo.bar");
   assertEquals(combineSelectorPaths([".foo", "&:hover"]), ".foo:hover");
   assertEquals(combineSelectorPaths([".foo", "&__inner"]), ".foo__inner");
   assertEquals(combineSelectorPaths([".foo", "&--active"]), ".foo--active");
   assertEquals(combineSelectorPaths([".foo", "&::before"]), ".foo::before");
   assertEquals(combineSelectorPaths([".foo", "+.bar"]), ".foo+.bar");
-  assertEquals(combineSelectorPaths([".foo", " *"]), ".foo *");
+  assertEquals(combineSelectorPaths([".foo", "*"]), ".foo *");
+  assertEquals(combineSelectorPaths([".foo", "#bar"]), ".foo #bar");
+  assertEquals(combineSelectorPaths([".foo", ":hover"]), ".foo :hover");
+  assertEquals(combineSelectorPaths([".foo", "::before"]), ".foo ::before");
 
   assertEquals(combineSelectorPaths([".foo", ".parent &"]), ".parent .foo");
   assertEquals(combineSelectorPaths([".foo", "&+&"]), ".foo+.foo");
@@ -520,7 +556,7 @@ Deno.test({ name: "combineSelectorPaths #1", only: false }, () => {
 });
 
 Deno.test(
-  { name: "combineSelectorPaths #2, selector list", only: true },
+  { name: "combineSelectorPaths #2, selector list", only: false },
   () => {
     assertEquals(
       combineSelectorPaths([".base", "p,div,span"]),
