@@ -2,6 +2,7 @@ import { assertEquals } from "./deps.ts";
 import {
   combineSelectorPaths,
   connectPathSegment,
+  connectPathSegmentEx,
   crc32,
   extractNestedCss,
 } from "../src/resin_css_core.ts";
@@ -209,34 +210,6 @@ Deno.test("extractNestedCss, various selectors", () => {
 .foo~h4{color:#f08;}
 .foo *{color:#08f;}
 .foo #bar{color:#123;}`
-  );
-});
-
-Deno.test("extractNestedCss, selector list", () => {
-  const parsed = extractNestedCss(
-    css`
-      color: blue;
-      p,
-      div,
-      span {
-        color: red;
-      }
-
-      .aa,
-      .bb {
-        .cc,
-        .dd {
-          color: yellow;
-        }
-      }
-    `,
-    ".foo"
-  );
-  assertEquals(
-    parsed,
-    `.foo{color:blue;}
-.foo p,.foo div,.foo span{color:red;}
-.foo .aa .cc,.foo .aa .dd,.foo .bb .cc,.foo .bb .dd{color:red;}`
   );
 });
 
@@ -491,7 +464,6 @@ Deno.test({ name: "extractNestedCss, dev10", only: false }, () => {
 });
 
 Deno.test({ name: "connectPathSegment #1", only: false }, () => {
-  // assertEquals(connectPathSegment([".foo"]), ".foo");
   assertEquals(connectPathSegment(".foo", ">.bar"), ".foo>.bar");
   assertEquals(connectPathSegment(".foo", "+.bar"), ".foo+.bar");
   assertEquals(connectPathSegment(".foo", "&.bar"), ".foo.bar");
@@ -521,6 +493,25 @@ Deno.test({ name: "connectPathSegment #1", only: false }, () => {
     ".box .box__element"
   );
 });
+
+Deno.test(
+  { name: "connectPathSegmentEx #1, selector list", only: false },
+  () => {
+    assertEquals(
+      connectPathSegmentEx(".base", "p,div,span"),
+      ".base p,.base div,.base span"
+    );
+    assertEquals(connectPathSegmentEx(".aa,.bb", ">p"), ".aa>p,.bb>p");
+    assertEquals(
+      connectPathSegmentEx(".base", ">p,>div,>span"),
+      ".base>p,.base>div,.base>span"
+    );
+    assertEquals(
+      connectPathSegmentEx(".aa,.bb", ">.cc,>.dd"),
+      ".aa>.cc,.aa>.dd,.bb>.cc,.bb>.dd"
+    );
+  }
+);
 
 Deno.test({ name: "combineSelectorPaths #1", only: false }, () => {
   assertEquals(combineSelectorPaths([".foo"]), ".foo");
@@ -560,11 +551,16 @@ Deno.test(
   () => {
     assertEquals(
       combineSelectorPaths([".base", "p,div,span"]),
-      ".base p,.base div, .base span"
+      ".base p,.base div,.base span"
     );
+    assertEquals(combineSelectorPaths([".aa,.bb", ">p"]), ".aa>p,.bb>p");
     assertEquals(
       combineSelectorPaths([".base", ">p,>div,>span"]),
-      ".base>p,.base>div, .base>span"
+      ".base>p,.base>div,.base>span"
+    );
+    assertEquals(
+      combineSelectorPaths([".aa,.bb", ">.cc,>.dd"]),
+      ".aa>.cc,.aa>.dd,.bb>.cc,.bb>.dd"
     );
     assertEquals(
       combineSelectorPaths([".base", ".aa,.bb", ".cc,.dd"]),
@@ -572,3 +568,31 @@ Deno.test(
     );
   }
 );
+
+Deno.test("extractNestedCss, selector list", () => {
+  const parsed = extractNestedCss(
+    css`
+      color: blue;
+      p,
+      div,
+      span {
+        color: red;
+      }
+
+      .aa,
+      .bb {
+        .cc,
+        .dd {
+          color: yellow;
+        }
+      }
+    `,
+    ".foo"
+  );
+  assertEquals(
+    parsed,
+    `.foo{color:blue;}
+.foo p,.foo div,.foo span{color:red;}
+.foo .aa .cc,.foo .aa .dd,.foo .bb .cc,.foo .bb .dd{color:yellow;}`
+  );
+});
