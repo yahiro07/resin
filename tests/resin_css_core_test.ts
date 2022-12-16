@@ -548,6 +548,13 @@ Deno.test({ name: "combineSelectorPaths #1", only: false }, () => {
   assertEquals(combineSelectorPaths(["ul>", "li"]), "ul>li");
   assertEquals(combineSelectorPaths(["h2", "+p"]), "h2+p");
   assertEquals(combineSelectorPaths(["p", "~", "span"]), "p~span");
+
+  assertEquals(combineSelectorPaths([".alert", "&:hover"]), ".alert:hover");
+  assertEquals(
+    combineSelectorPaths([".alert", "[dir=rtl] &"]),
+    "[dir=rtl] .alert"
+  );
+  assertEquals(combineSelectorPaths([".alert", ":not(&)"]), ":not(.alert)");
 });
 
 Deno.test(
