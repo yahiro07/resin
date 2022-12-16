@@ -1,5 +1,6 @@
 import { assertEquals } from "./deps.ts";
 import {
+  combineMediaQueries,
   combineSelectorPaths,
   concatPathSegment,
   concatPathSegmentEx,
@@ -354,13 +355,13 @@ Deno.test("extractNestedCss, dev6", () => {
     `,
     ".foo"
   );
-  //TODO: support media query
-  //   assertEquals(
-  //     parsed,
-  //     `.foo{width: 1200px;}
-  // @media screen and (max-width: 640px) {
-  // .foo{width: 100%;}`
-  //   );
+  assertEquals(
+    parsed,
+    `.foo{width:1200px;}
+@media screen and (max-width:640px){
+  .foo{width:100%;}
+}`
+  );
 });
 
 Deno.test(
@@ -602,5 +603,53 @@ Deno.test("extractNestedCss, selector list", () => {
     `.foo{color:blue;}
 .foo p,.foo div,.foo span{color:red;}
 .foo .aa .cc,.foo .aa .dd,.foo .bb .cc,.foo .bb .dd{color:yellow;}`
+  );
+});
+
+Deno.test({ name: "combineMediaQueries #1", only: false }, () => {
+  assertEquals(
+    combineMediaQueries([
+      "@media screen and (max-width:640px)",
+      "@media screen and (min-width:320px)",
+    ]),
+    "@media screen and (max-width:640px) and (min-width:320px)"
+  );
+});
+
+Deno.test({ name: "extractNestedCss, media query", only: false }, () => {
+  const parsed = extractNestedCss(
+    css`
+      color: blue;
+      @media screen and (max-width: 640px) {
+        color: red;
+        .bar {
+          color: green;
+        }
+        @media screen and (min-width: 320px) {
+          color: yellow;
+        }
+      }
+
+      .buzz {
+        @media screen and (min-width: 480px) {
+          color: pink;
+        }
+      }
+    `,
+    ".foo"
+  );
+  assertEquals(
+    parsed,
+    `.foo{color:blue;}
+@media screen and (max-width:640px){
+  .foo{color:red;}
+  .foo .bar{color:green;}
+}
+@media screen and (max-width:640px) and (min-width:320px){
+  .foo{color:yellow;}
+}
+@media screen and (min-width:480px){
+  .foo .buzz{color:pink;}
+}`
   );
 });

@@ -1,3 +1,5 @@
+//----------
+
 //crc32 function based on https://stackoverflow.com/a/18639999
 const makeCRCTable = () => {
   let c;
@@ -21,6 +23,39 @@ export const crc32 = (str: string): string => {
   const value = (crc ^ -1) >>> 0;
   return value.toString(16).padStart(8, "0");
 };
+
+//----------
+
+function arrayDiallel<A, B>(ar: A[], br: B[]): [A, B][] {
+  const res: [A, B][] = [];
+  for (const a of ar) {
+    for (const b of br) {
+      res.push([a, b]);
+    }
+  }
+  return res;
+}
+
+function groupArrayItems<T>(
+  items: T[],
+  keyFn: (value: T) => string
+): Record<string, T[]> {
+  const res: Record<string, T[]> = {};
+  for (const item of items) {
+    const key = keyFn(item);
+    if (!res[key]) {
+      res[key] = [];
+    }
+    res[key].push(item);
+  }
+  return res;
+}
+
+function uniqueArrayItems<T>(items: T[]): T[] {
+  return items.filter((it, index) => items.indexOf(it) == index);
+}
+
+//----------
 
 export function extractCssTemplate(
   template: TemplateStringsArray,
@@ -55,16 +90,6 @@ function transformCssBodyTextToNormalizedLines(cssBodyText: string) {
   );
 }
 
-function arrayDiallel<A, B>(ar: A[], br: B[]): [A, B][] {
-  const res: [A, B][] = [];
-  for (const a of ar) {
-    for (const b of br) {
-      res.push([a, b]);
-    }
-  }
-  return res;
-}
-
 export function concatPathSegment(path: string, seg: string) {
   if (seg.includes("&")) {
     return seg.replace(/&/g, path).trim();
@@ -94,32 +119,92 @@ export function combineSelectorPaths(selectorPaths: string[]) {
   }
 }
 
+export function combineMediaQueries(mediaQuerySpecs: string[]): string {
+  if (mediaQuerySpecs.length == 0) {
+    return "";
+  }
+  const srcParts = mediaQuerySpecs
+    .map((mq) =>
+      mq
+        .replace(/^@media\s/, "")
+        .split("and")
+        .map((it) => it.trim())
+    )
+    .flat();
+  const parts = uniqueArrayItems(srcParts);
+  return `@media ${parts.join(" and ")}`;
+}
+
+type CssSlot = {
+  selectorPath: string;
+  mediaQuerySpec: string;
+  cssLines: string[];
+};
+
+function prepareCssSlot(
+  narrowers: string[],
+  cssSlots: Record<string, CssSlot>
+) {
+  const pathParts = narrowers.filter((it) => !it.startsWith("@media"));
+  const mediaQueryParts = narrowers.filter((it) => it.startsWith("@media"));
+  const selectorPath = combineSelectorPaths(pathParts);
+  const mediaQuerySpec = combineMediaQueries(mediaQueryParts);
+  const slotKey = `${mediaQuerySpec}${selectorPath}`;
+  if (!cssSlots[slotKey]) {
+    cssSlots[slotKey] = {
+      selectorPath,
+      mediaQuerySpec,
+      cssLines: [],
+    };
+  }
+  return slotKey;
+}
+
+function stringifyCssSlots(slots: CssSlot[]) {
+  const { mediaQuerySpec } = slots[0];
+  const cssContentLines = slots.map(
+    (slot) => `${slot.selectorPath}{${slot.cssLines.join(" ")}}`
+  );
+  if (mediaQuerySpec) {
+    const cssContents = cssContentLines.map((line) => `  ${line}`).join("\n");
+    return `${mediaQuerySpec}{\n${cssContents}\n}`;
+  } else {
+    return cssContentLines.join("\n");
+  }
+}
+
 export function extractNestedCss(
   cssBodyText: string,
   topSelector: string
 ): string {
   const srcLines = transformCssBodyTextToNormalizedLines(cssBodyText);
-  // console.log({ srcLines });
 
-  const cssBlocks: Record<string, string[]> = {};
-  const selectorPaths: string[] = [topSelector];
+  const cssSlots: Record<string, CssSlot> = {};
+  const narrowers: string[] = [topSelector];
+  let slotKey = prepareCssSlot(narrowers, cssSlots);
 
   for (const line of srcLines) {
     if (line.endsWith("{")) {
       const selector = line.slice(0, line.length - 1);
-      selectorPaths.push(selector);
+      narrowers.push(selector);
+      slotKey = prepareCssSlot(narrowers, cssSlots);
     } else if (line.endsWith("}")) {
-      selectorPaths.pop();
+      narrowers.pop();
+      slotKey = prepareCssSlot(narrowers, cssSlots);
     } else {
-      const selectorPath = combineSelectorPaths(selectorPaths);
-      // console.log({ selectorPaths, selectorPath });
-      if (!cssBlocks[selectorPath]) {
-        cssBlocks[selectorPath] = [];
-      }
-      cssBlocks[selectorPath].push(line);
+      cssSlots[slotKey].cssLines.push(line);
     }
   }
-  return Object.keys(cssBlocks)
-    .map((key) => `${key}{${cssBlocks[key].join(" ")}}`)
+  for (const key in cssSlots) {
+    if (cssSlots[key].cssLines.length == 0) {
+      delete cssSlots[key];
+    }
+  }
+  const slotsGroupedByMediaQuery = groupArrayItems(
+    Object.values(cssSlots),
+    (slot) => slot.mediaQuerySpec
+  );
+  return Object.values(slotsGroupedByMediaQuery)
+    .map(stringifyCssSlots)
     .join("\n");
 }
