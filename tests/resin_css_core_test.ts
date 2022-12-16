@@ -544,6 +544,10 @@ Deno.test({ name: "combineSelectorPaths #1", only: false }, () => {
     "#main span+span"
   );
   assertEquals(combineSelectorPaths(["#main", ">p"]), "#main>p");
+
+  assertEquals(combineSelectorPaths(["ul>", "li"]), "ul>li");
+  assertEquals(combineSelectorPaths(["h2", "+p"]), "h2+p");
+  assertEquals(combineSelectorPaths(["p", "~", "span"]), "p~span");
 });
 
 Deno.test(

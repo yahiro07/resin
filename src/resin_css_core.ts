@@ -65,15 +65,15 @@ function arrayDiallel<A, B>(ar: A[], br: B[]): [A, B][] {
   return res;
 }
 
-export function connectPathSegment(path: string, inputSeg: string) {
-  let seg = inputSeg;
-  if (seg.match(/^[a-zA-Z.#*\[:]/)) {
-    seg = ` ${seg}`;
-  }
+export function connectPathSegment(path: string, seg: string) {
   if (seg.includes("&")) {
     return seg.replace(/&/g, path).trim();
   }
-  return path + seg;
+  if (path.match(/\w$/) && seg.match(/^[a-zA-Z.#*\[:]/)) {
+    return `${path} ${seg}`;
+  } else {
+    return `${path}${seg}`;
+  }
 }
 
 export function connectPathSegmentEx(srcPath: string, inputSeg: string) {
