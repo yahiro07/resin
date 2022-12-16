@@ -17,7 +17,7 @@ import {
   css,
   ResinCssEmitter,
   solidify,
-} from "https://github.com/yahiro07/resin-css/mod.ts";
+} from "https://cdn.jsdelivr.net/gh/yahiro07/resin-css/mod.ts";
 ```
 
 Just reference the code from your Deno+Fresh app. No configurations required.
