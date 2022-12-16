@@ -2,7 +2,9 @@
 
 <img align="right" src="./resin_logo.svg" height="140px" alt="the resin logo: two bottles labeled CSS and JS">
 
-A lightweight css-in-js library works with Deno and Fresh.
+A small css-in-js library works with Deno and Fresh. The core concept is build a
+decorated component by writing jsx and css parts and combine(solidify) them.
+Easy and clean inline code helps making a well-styled apps.
 
 ## Usage
 
