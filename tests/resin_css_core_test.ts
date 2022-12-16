@@ -1,8 +1,8 @@
 import { assertEquals } from "./deps.ts";
 import {
   combineSelectorPaths,
-  connectPathSegment,
-  connectPathSegmentEx,
+  concatPathSegment,
+  concatPathSegmentEx,
   crc32,
   extractNestedCss,
 } from "../src/resin_css_core.ts";
@@ -464,50 +464,47 @@ Deno.test({ name: "extractNestedCss, dev10", only: false }, () => {
 });
 
 Deno.test({ name: "connectPathSegment #1", only: false }, () => {
-  assertEquals(connectPathSegment(".foo", ">.bar"), ".foo>.bar");
-  assertEquals(connectPathSegment(".foo", "+.bar"), ".foo+.bar");
-  assertEquals(connectPathSegment(".foo", "&.bar"), ".foo.bar");
-  assertEquals(connectPathSegment(".foo", ".bar"), ".foo .bar");
-  assertEquals(connectPathSegment("div", "h1"), "div h1");
-  assertEquals(connectPathSegment(".foo", "*"), ".foo *");
+  assertEquals(concatPathSegment(".foo", ">.bar"), ".foo>.bar");
+  assertEquals(concatPathSegment(".foo", "+.bar"), ".foo+.bar");
+  assertEquals(concatPathSegment(".foo", "&.bar"), ".foo.bar");
+  assertEquals(concatPathSegment(".foo", ".bar"), ".foo .bar");
+  assertEquals(concatPathSegment("div", "h1"), "div h1");
+  assertEquals(concatPathSegment(".foo", "*"), ".foo *");
   assertEquals(
-    connectPathSegment("input", `&[type="number"]`),
+    concatPathSegment("input", `&[type="number"]`),
     `input[type="number"]`
   );
   assertEquals(
-    connectPathSegment("input", `[type="number"]`),
+    concatPathSegment("input", `[type="number"]`),
     `input [type="number"]`
   );
-  assertEquals(connectPathSegment(".foo", ".parent &"), ".parent .foo");
-  assertEquals(connectPathSegment(".foo", "&+&"), ".foo+.foo");
+  assertEquals(concatPathSegment(".foo", ".parent &"), ".parent .foo");
+  assertEquals(concatPathSegment(".foo", "&+&"), ".foo+.foo");
 
-  assertEquals(connectPathSegment(".foo .bar", "&:buzz"), ".foo .bar:buzz");
-  assertEquals(connectPathSegment(".foo>.bar", "&+&"), ".foo>.bar+.foo>.bar");
-  assertEquals(connectPathSegment(".foo .bar", "&+&"), ".foo .bar+.foo .bar");
+  assertEquals(concatPathSegment(".foo .bar", "&:buzz"), ".foo .bar:buzz");
+  assertEquals(concatPathSegment(".foo>.bar", "&+&"), ".foo>.bar+.foo>.bar");
+  assertEquals(concatPathSegment(".foo .bar", "&+&"), ".foo .bar+.foo .bar");
   assertEquals(
-    connectPathSegment(".foo .bar", ".parent+&"),
+    concatPathSegment(".foo .bar", ".parent+&"),
     ".parent+.foo .bar"
   );
-  assertEquals(
-    connectPathSegment(".box", "& &__element"),
-    ".box .box__element"
-  );
+  assertEquals(concatPathSegment(".box", "& &__element"), ".box .box__element");
 });
 
 Deno.test(
   { name: "connectPathSegmentEx #1, selector list", only: false },
   () => {
     assertEquals(
-      connectPathSegmentEx(".base", "p,div,span"),
+      concatPathSegmentEx(".base", "p,div,span"),
       ".base p,.base div,.base span"
     );
-    assertEquals(connectPathSegmentEx(".aa,.bb", ">p"), ".aa>p,.bb>p");
+    assertEquals(concatPathSegmentEx(".aa,.bb", ">p"), ".aa>p,.bb>p");
     assertEquals(
-      connectPathSegmentEx(".base", ">p,>div,>span"),
+      concatPathSegmentEx(".base", ">p,>div,>span"),
       ".base>p,.base>div,.base>span"
     );
     assertEquals(
-      connectPathSegmentEx(".aa,.bb", ">.cc,>.dd"),
+      concatPathSegmentEx(".aa,.bb", ">.cc,>.dd"),
       ".aa>.cc,.aa>.dd,.bb>.cc,.bb>.dd"
     );
   }

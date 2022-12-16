@@ -65,7 +65,7 @@ function arrayDiallel<A, B>(ar: A[], br: B[]): [A, B][] {
   return res;
 }
 
-export function connectPathSegment(path: string, seg: string) {
+export function concatPathSegment(path: string, seg: string) {
   if (seg.includes("&")) {
     return seg.replace(/&/g, path).trim();
   }
@@ -76,11 +76,11 @@ export function connectPathSegment(path: string, seg: string) {
   }
 }
 
-export function connectPathSegmentEx(srcPath: string, inputSeg: string) {
+export function concatPathSegmentEx(srcPath: string, inputSeg: string) {
   const srcPaths = srcPath.split(",");
   const inputSegs = inputSeg.split(",");
   return arrayDiallel(srcPaths, inputSegs)
-    .map((z) => connectPathSegment(z[0], z[1]))
+    .map((z) => concatPathSegment(z[0], z[1]))
     .join(",");
 }
 
@@ -88,7 +88,7 @@ export function combineSelectorPaths(selectorPaths: string[]) {
   if (selectorPaths.length >= 2) {
     const head = selectorPaths[0];
     const tails = selectorPaths.slice(1);
-    return tails.reduce(connectPathSegmentEx, head);
+    return tails.reduce(concatPathSegmentEx, head);
   } else {
     return selectorPaths[0];
   }
