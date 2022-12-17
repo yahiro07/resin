@@ -150,6 +150,22 @@ function ZooComponent() {
 }
 ```
 
+## Style compotion
+
+A style definition can be embed into another by string interpolatiton.
+
+```tsx
+const base = css`
+    color: red;
+    font-size: 20px;
+  `;
+
+const extended = css`
+    ${base};
+    background: blue;
+  `;
+```
+
 ## License
 
 MIT License
