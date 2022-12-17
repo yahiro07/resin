@@ -5,10 +5,16 @@ import {
   extractNestedCss,
 } from "./resin_css_core.ts";
 
+type JSXElement = JSX.Element;
+
+type CssBall = {
+  className: string;
+  inputCssText: string;
+  cssText: string;
+};
+
 //----------
 //stateless helpers
-
-type JSXElement = JSX.Element;
 
 const IS_BROWSER = typeof document !== "undefined";
 
@@ -27,26 +33,20 @@ function addClassToVdom(vdom: JSXElement, className: string): JSXElement {
 //common
 
 const moduleLocalStateCommon = {
-  mapInputCssTextToClassName: {} as Record<string, string>,
-  mapClassNameToConvertedCssText: {} as Record<string, string>,
+  cssBalls: [] as CssBall[],
 };
 
-function getConvertedCssTextFromClassName(className: string) {
-  return moduleLocalStateCommon.mapClassNameToConvertedCssText[className];
-}
-
-function translateCssDefinitionCached(inputCssText: string): string {
-  const { mapInputCssTextToClassName, mapClassNameToConvertedCssText } =
-    moduleLocalStateCommon;
-  let className = mapInputCssTextToClassName[inputCssText];
-  if (!className) {
+function createCssBallCached(inputCssText: string): CssBall {
+  const { cssBalls } = moduleLocalStateCommon;
+  let cssBall = cssBalls.find((css) => css.inputCssText === inputCssText);
+  if (!cssBall) {
     const inputCssTextMod = inputCssText.replace(/,\r?\n/g, ",");
-    className = `cs_${crc32(inputCssTextMod)}`;
-    mapInputCssTextToClassName[inputCssText] = className;
-    const convertedCssText = extractNestedCss(inputCssTextMod, `.${className}`);
-    mapClassNameToConvertedCssText[className] = convertedCssText;
+    const className = `cs_${crc32(inputCssTextMod)}`;
+    const cssText = extractNestedCss(inputCssTextMod, `.${className}`);
+    cssBall = { className, inputCssText, cssText };
+    cssBalls.push(cssBall);
   }
-  return className;
+  return cssBall;
 }
 
 //----------
@@ -87,7 +87,7 @@ function pushCssTextToEmitterForBrowser(className: string, cssText: string) {
   if (!sb.pageCssClassNames) {
     sb.pageCssClassNames = new Set();
     const el = getReginCssPageTagNode();
-    const matches = el.innerHTML.match(/cs_[\w]{8}/g);
+    const matches = el.innerHTML.match(/cs_[0-9a-f]{8}/g);
     if (matches) {
       for (const m of matches) {
         sb.pageCssClassNames.add(m);
@@ -107,14 +107,13 @@ function pushCssTextToEmitterForBrowser(className: string, cssText: string) {
 export function css(
   template: TemplateStringsArray,
   ...templateParameters: (string | number)[]
-): string {
+): CssBall {
   const inputCssText = extractCssTemplate(template, templateParameters);
-  return translateCssDefinitionCached(inputCssText);
+  return createCssBallCached(inputCssText);
 }
 
-export function solidify(vdom: JSXElement, css: string): JSXElement {
-  const className = css;
-  const cssText = getConvertedCssTextFromClassName(className);
+export function solidify(vdom: JSXElement, css: CssBall): JSXElement {
+  const { className, cssText } = css;
   if (!IS_BROWSER) {
     pushCssTextToEmitterForSsr(className, cssText);
   } else {
@@ -128,10 +127,10 @@ export const ResinCssEmitter: FunctionComponent = () => {
   return h("style", { id: "resin-css-page-css-tag" }, pageCssFullText);
 };
 
-export const ResinCssGlobalStyle: FunctionComponent<{ css: string }> = ({
-  css: className,
+export const ResinCssGlobalStyle: FunctionComponent<{ css: CssBall }> = ({
+  css,
 }) => {
-  const cssText = getConvertedCssTextFromClassName(className);
+  const { className, cssText } = css;
   const cssOutputText = cssText.replace(new RegExp(`.${className}`, "g"), "");
   return h("style", null, cssOutputText);
 };
