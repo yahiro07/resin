@@ -6,7 +6,7 @@ Deno.test("extractCssTemplate #1,", () => {
     border: solid 1px red;
     background: blue;
   `;
-  assertEquals(parsed, `border: solid 1px red;background: blue;`);
+  assertEquals(parsed, `border:solid 1px red;background:blue;`);
 });
 
 Deno.test("css #1,", () => {
@@ -14,11 +14,11 @@ Deno.test("css #1,", () => {
     border: solid 1px red;
     background: blue;
   `;
-  assertEquals(cssBall.className, "cs_91bfb93f");
-  assertEquals(cssBall.inputCssText, `border: solid 1px red;background: blue;`);
+  assertEquals(cssBall.className, "cs_5633d4ab");
+  assertEquals(cssBall.inputCssText, `border:solid 1px red;background:blue;`);
   assertEquals(
     cssBall.cssText,
-    `.cs_91bfb93f{border:solid 1px red; background:blue;}`
+    `.cs_5633d4ab{border:solid 1px red; background:blue;}`
   );
 });
 
@@ -30,14 +30,13 @@ Deno.test("css #2, embed values", () => {
     border-color: ${borderColor};
     background: blue;
   `;
-  assertEquals(cssBall.className, "cs_6ff2292b");
   assertEquals(
-    cssBall.cssText,
-    `.cs_6ff2292b{width:100px; border-color:red; background:blue;}`
+    cssBall.inputCssText,
+    `width:100px;border-color:red;background:blue;`
   );
 });
 
-Deno.test("css #2, composition", () => {
+Deno.test("css #3, composition", () => {
   const base = css`
     color: red;
     font-size: 20px;
@@ -46,13 +45,25 @@ Deno.test("css #2, composition", () => {
     ${base};
     background: blue;
   `;
-  assertEquals(cssBall.className, "cs_e660e319");
   assertEquals(
     cssBall.inputCssText,
-    `color: red;font-size: 20px;background: blue;`
+    `color:red;font-size:20px;background:blue;`
   );
-  assertEquals(
-    cssBall.cssText,
-    `.cs_e660e319{color:red; font-size:20px; background:blue;}`
-  );
+});
+
+Deno.test("css #4, conditional composition", () => {
+  const active1 = true;
+  const active2 = false;
+  const cssBall = css`
+    ${active1 &&
+    css`
+      color: red;
+    `};
+    background: blue;
+    ${active2 &&
+    css`
+      border-color: green;
+    `};
+  `;
+  assertEquals(cssBall.inputCssText, `color:red;background:blue;`);
 });

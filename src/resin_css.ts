@@ -48,20 +48,38 @@ function createCssBallCached(inputCssText: string): CssBall {
 
 export function extractCssTemplate(
   template: TemplateStringsArray,
-  ...values: (string | number | CssBall)[]
+  ...values: (string | number | CssBall | boolean)[]
 ): string {
   let text = "";
   let i = 0;
   for (i = 0; i < values.length; i++) {
     text += template[i];
-    let value = values[i];
+    const value = values[i];
     if (typeof value === "object" && "inputCssText" in value) {
-      value = value.inputCssText;
+      text += value.inputCssText;
+    } else if (
+      value === false ||
+      value === null ||
+      value === undefined ||
+      value === ""
+    ) {
+      //skip
+    } else {
+      text += value.toString();
     }
-    text += value.toString();
   }
   text += template[i];
-  return text.replace(/\s*\n\s*/g, "").replace(/;;/g, ";");
+  return (
+    text
+      //remove newlines
+      .replace(/\s*\r?\n\s*/g, "")
+      //remove spaces
+      .replace(/\s*([:{\.;>+~,])\s*/g, (_, p1) => p1)
+      // .replace(/\s*\n\s*/g, "")
+      //remove double semicolon
+      .replace(/;;/g, ";")
+  );
+  // .replace(/;(.)/g, (_, p1) => `; ${p1}`);
 }
 
 //----------
@@ -121,7 +139,7 @@ function pushCssTextToEmitterForBrowser(className: string, cssText: string) {
 
 export function css(
   template: TemplateStringsArray,
-  ...templateParameters: (string | number | CssBall)[]
+  ...templateParameters: (string | number | CssBall | boolean)[]
 ): CssBall {
   const inputCssText = extractCssTemplate(template, ...templateParameters);
   return createCssBallCached(inputCssText);
