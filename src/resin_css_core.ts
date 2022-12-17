@@ -2,6 +2,40 @@
 
 import { arrayDiallel, groupArrayItems, uniqueArrayItems } from "./helpers.ts";
 
+export function extractCssTemplate(
+  template: TemplateStringsArray,
+  ...values: (string | number | { sourceCssText: string } | boolean)[]
+): string {
+  let text = "";
+  let i = 0;
+  for (i = 0; i < values.length; i++) {
+    text += template[i];
+    const value = values[i];
+    if (typeof value === "object" && "sourceCssText" in value) {
+      text += value.sourceCssText;
+    } else if (
+      value === false ||
+      value === null ||
+      value === undefined ||
+      value === ""
+    ) {
+      //skip
+    } else {
+      text += value.toString();
+    }
+  }
+  text += template[i];
+  return (
+    text
+      //remove newlines
+      .replace(/\s*\r?\n\s*/g, "")
+      //remove spaces
+      .replace(/\s*([:{\.;>+~,])\s*/g, (_, p1) => p1)
+      //remove double semicolon
+      .replace(/;;/g, ";")
+  );
+}
+
 function transformCssBodyTextToNormalizedLines(cssBodyText: string) {
   return (
     cssBodyText

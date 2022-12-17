@@ -1,14 +1,14 @@
-import { assertEquals } from "./deps.ts";
 import {
   combineMediaQueries,
   combineSelectorPaths,
   concatPathSegment,
   concatPathSegmentEx,
+  extractCssTemplate,
   extractNestedCss,
 } from "../src/resin_css_core.ts";
-import { extractCssTemplate } from "../src/resin_css.ts";
+import { assertEquals } from "./deps.ts";
 
-//dummy function locally used
+//deputy function locally used
 function css(
   template: TemplateStringsArray,
   ...values: (string | number)[]
@@ -132,6 +132,14 @@ Deno.test("combineMediaQueries #1", () => {
     ]),
     "@media screen and (max-width:640px) and (min-width:320px)"
   );
+});
+
+Deno.test("extractCssTemplate #1,", () => {
+  const parsed = extractCssTemplate`
+    border: solid 1px red;
+    background: blue;
+  `;
+  assertEquals(parsed, `border:solid 1px red;background:blue;`);
 });
 
 Deno.test("extractNestedCss #1, flat", () => {

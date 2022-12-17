@@ -1,12 +1,12 @@
 import { FunctionComponent, JSX, h } from "preact";
 import { crc32 } from "./helpers.ts";
-import { extractNestedCss } from "./resin_css_core.ts";
+import { extractCssTemplate, extractNestedCss } from "./resin_css_core.ts";
 
 type JSXElement = JSX.Element;
 
 type CssBall = {
   className: string;
-  inputCssText: string;
+  sourceCssText: string;
   cssText: string;
 };
 
@@ -33,53 +33,17 @@ const moduleLocalStateCommon = {
   cssBalls: [] as CssBall[],
 };
 
-function createCssBallCached(inputCssText: string): CssBall {
+function createCssBallCached(sourceCssText: string): CssBall {
   const { cssBalls } = moduleLocalStateCommon;
-  let cssBall = cssBalls.find((css) => css.inputCssText === inputCssText);
+  let cssBall = cssBalls.find((css) => css.sourceCssText === sourceCssText);
   if (!cssBall) {
-    const inputCssTextMod = inputCssText.replace(/,\r?\n/g, ",");
+    const inputCssTextMod = sourceCssText.replace(/,\r?\n/g, ",");
     const className = `cs_${crc32(inputCssTextMod)}`;
     const cssText = extractNestedCss(inputCssTextMod, `.${className}`);
-    cssBall = { className, inputCssText, cssText };
+    cssBall = { className, sourceCssText, cssText };
     cssBalls.push(cssBall);
   }
   return cssBall;
-}
-
-export function extractCssTemplate(
-  template: TemplateStringsArray,
-  ...values: (string | number | CssBall | boolean)[]
-): string {
-  let text = "";
-  let i = 0;
-  for (i = 0; i < values.length; i++) {
-    text += template[i];
-    const value = values[i];
-    if (typeof value === "object" && "inputCssText" in value) {
-      text += value.inputCssText;
-    } else if (
-      value === false ||
-      value === null ||
-      value === undefined ||
-      value === ""
-    ) {
-      //skip
-    } else {
-      text += value.toString();
-    }
-  }
-  text += template[i];
-  return (
-    text
-      //remove newlines
-      .replace(/\s*\r?\n\s*/g, "")
-      //remove spaces
-      .replace(/\s*([:{\.;>+~,])\s*/g, (_, p1) => p1)
-      // .replace(/\s*\n\s*/g, "")
-      //remove double semicolon
-      .replace(/;;/g, ";")
-  );
-  // .replace(/;(.)/g, (_, p1) => `; ${p1}`);
 }
 
 //----------

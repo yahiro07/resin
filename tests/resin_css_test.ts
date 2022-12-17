@@ -1,13 +1,5 @@
 import { assertEquals } from "./deps.ts";
-import { css, extractCssTemplate } from "../src/resin_css.ts";
-
-Deno.test("extractCssTemplate #1,", () => {
-  const parsed = extractCssTemplate`
-    border: solid 1px red;
-    background: blue;
-  `;
-  assertEquals(parsed, `border:solid 1px red;background:blue;`);
-});
+import { css } from "../src/resin_css.ts";
 
 Deno.test("css #1,", () => {
   const cssBall = css`
@@ -15,7 +7,7 @@ Deno.test("css #1,", () => {
     background: blue;
   `;
   assertEquals(cssBall.className, "cs_5633d4ab");
-  assertEquals(cssBall.inputCssText, `border:solid 1px red;background:blue;`);
+  assertEquals(cssBall.sourceCssText, `border:solid 1px red;background:blue;`);
   assertEquals(
     cssBall.cssText,
     `.cs_5633d4ab{border:solid 1px red; background:blue;}`
@@ -31,7 +23,7 @@ Deno.test("css #2, embed values", () => {
     background: blue;
   `;
   assertEquals(
-    cssBall.inputCssText,
+    cssBall.sourceCssText,
     `width:100px;border-color:red;background:blue;`
   );
 });
@@ -46,7 +38,7 @@ Deno.test("css #3, composition", () => {
     background: blue;
   `;
   assertEquals(
-    cssBall.inputCssText,
+    cssBall.sourceCssText,
     `color:red;font-size:20px;background:blue;`
   );
 });
@@ -65,5 +57,5 @@ Deno.test("css #4, conditional composition", () => {
       border-color: green;
     `};
   `;
-  assertEquals(cssBall.inputCssText, `color:red;background:blue;`);
+  assertEquals(cssBall.sourceCssText, `color:red;background:blue;`);
 });
