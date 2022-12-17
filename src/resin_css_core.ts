@@ -2,21 +2,6 @@
 
 import { arrayDiallel, groupArrayItems, uniqueArrayItems } from "./helpers.ts";
 
-export function extractCssTemplate(
-  template: TemplateStringsArray,
-  values: (string | number)[]
-): string {
-  let text = "";
-  let i = 0;
-  for (i = 0; i < values.length; i++) {
-    text += template[i];
-    const value = values[i].toString();
-    text += value;
-  }
-  text += template[i];
-  return text;
-}
-
 function transformCssBodyTextToNormalizedLines(cssBodyText: string) {
   return (
     cssBodyText

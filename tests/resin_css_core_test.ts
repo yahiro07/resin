@@ -6,21 +6,14 @@ import {
   concatPathSegmentEx,
   extractNestedCss,
 } from "../src/resin_css_core.ts";
+import { extractCssTemplate } from "../src/resin_css.ts";
 
 //dummy function locally used
 function css(
   template: TemplateStringsArray,
   ...values: (string | number)[]
 ): string {
-  let text = "";
-  let i = 0;
-  for (i = 0; i < values.length; i++) {
-    text += template[i];
-    const value = values[i].toString();
-    text += value;
-  }
-  text += template[i];
-  return text;
+  return extractCssTemplate(template, ...values);
 }
 
 Deno.test("connectPathSegment #1", () => {

@@ -1,6 +1,6 @@
 import { FunctionComponent, JSX, h } from "preact";
 import { crc32 } from "./helpers.ts";
-import { extractCssTemplate, extractNestedCss } from "./resin_css_core.ts";
+import { extractNestedCss } from "./resin_css_core.ts";
 
 type JSXElement = JSX.Element;
 
@@ -44,6 +44,24 @@ function createCssBallCached(inputCssText: string): CssBall {
     cssBalls.push(cssBall);
   }
   return cssBall;
+}
+
+export function extractCssTemplate(
+  template: TemplateStringsArray,
+  ...values: (string | number | CssBall)[]
+): string {
+  let text = "";
+  let i = 0;
+  for (i = 0; i < values.length; i++) {
+    text += template[i];
+    let value = values[i];
+    if (typeof value === "object" && "inputCssText" in value) {
+      value = value.inputCssText;
+    }
+    text += value.toString();
+  }
+  text += template[i];
+  return text.replace(/\s*\n\s*/g, "").replace(/;;/g, ";");
 }
 
 //----------
@@ -103,9 +121,9 @@ function pushCssTextToEmitterForBrowser(className: string, cssText: string) {
 
 export function css(
   template: TemplateStringsArray,
-  ...templateParameters: (string | number)[]
+  ...templateParameters: (string | number | CssBall)[]
 ): CssBall {
-  const inputCssText = extractCssTemplate(template, templateParameters);
+  const inputCssText = extractCssTemplate(template, ...templateParameters);
   return createCssBallCached(inputCssText);
 }
 
