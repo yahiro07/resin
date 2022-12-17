@@ -1,9 +1,6 @@
 import { FunctionComponent, JSX, h } from "preact";
-import {
-  crc32,
-  extractCssTemplate,
-  extractNestedCss,
-} from "./resin_css_core.ts";
+import { crc32 } from "./helpers.ts";
+import { extractCssTemplate, extractNestedCss } from "./resin_css_core.ts";
 
 type JSXElement = JSX.Element;
 

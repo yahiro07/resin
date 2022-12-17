@@ -4,7 +4,6 @@ import {
   combineSelectorPaths,
   concatPathSegment,
   concatPathSegmentEx,
-  crc32,
   extractNestedCss,
 } from "../src/resin_css_core.ts";
 
@@ -23,10 +22,6 @@ function css(
   text += template[i];
   return text;
 }
-
-Deno.test("crc32", () => {
-  assertEquals(crc32("hello world"), "0d4a1185");
-});
 
 Deno.test("extractNestedCss, flat", () => {
   const parsed = extractNestedCss(
