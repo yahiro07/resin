@@ -6,14 +6,7 @@ import {
   ResinCssGlobalStyle,
 } from "resin-css/mod.ts";
 import Counter2 from "../islands/Counter2.tsx";
-
-const globalCss = css`
-  * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-  }
-`;
+import { globalStyle } from "../utils/global_style.ts";
 
 function PageContent() {
   return solidify(
@@ -36,7 +29,7 @@ export default function Counter2Page() {
       <Head>
         <title>Fresh App</title>
         <ResinCssEmitter />
-        <ResinCssGlobalStyle css={globalCss} />
+        <ResinCssGlobalStyle css={globalStyle} />
       </Head>
       <PageContent />
     </>

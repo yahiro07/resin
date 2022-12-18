@@ -6,18 +6,7 @@ import {
   ResinCssEmitter,
   ResinCssGlobalStyle,
 } from "resin-css/mod.ts";
-
-const globalCss = css`
-  * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-  }
-  html,
-  body {
-    height: 100%;
-  }
-`;
+import { globalStyle } from "../utils/global_style.ts";
 
 function PageContent() {
   return solidify(
@@ -28,7 +17,7 @@ function PageContent() {
       </div>
     </div>,
     css`
-      height: 100%;
+      height: 100vh;
       background: #eee;
       padding: 10px;
       display: flex;
@@ -60,7 +49,7 @@ export default function CounterPage() {
     <>
       <Head>
         <title>Fresh App</title>
-        <ResinCssGlobalStyle css={globalCss} />
+        <ResinCssGlobalStyle css={globalStyle} />
         <ResinCssEmitter />
       </Head>
       <PageContent />

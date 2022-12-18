@@ -5,18 +5,7 @@ import {
   ResinCssEmitter,
   ResinCssGlobalStyle,
 } from "resin-css/mod.ts";
-
-//define global style
-const globalCss = css`
-  * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-  }
-  body {
-    background: #efe;
-  }
-`;
+import { globalStyle } from "../utils/global_style.ts";
 
 function HelloComponent() {
   //attach css to the resulting vdom of FunctionalComponent
@@ -43,8 +32,8 @@ export default function HelloPage() {
       <Head>
         <title>Fresh App</title>
         {/* embed global style */}
-        <ResinCssGlobalStyle css={globalCss} />
-        {/* embed collected css definitions passed to solidify() */}
+        <ResinCssGlobalStyle css={globalStyle} />
+        {/* embed collected css definitions */}
         <ResinCssEmitter />
       </Head>
       <HelloComponent />
