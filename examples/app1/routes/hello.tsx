@@ -7,6 +7,21 @@ import {
 } from "resin-css/mod.ts";
 import { globalStyle } from "../utils/global_style.ts";
 
+export default function HelloPage() {
+  return (
+    <>
+      <Head>
+        <title>Fresh App</title>
+        {/* embed global style */}
+        <ResinCssGlobalStyle css={globalStyle} />
+        {/* embed collected css definitions */}
+        <ResinCssEmitter />
+      </Head>
+      <HelloComponent />
+    </>
+  );
+}
+
 function HelloComponent() {
   //attach css to the resulting vdom of FunctionalComponent
   return solidify(
@@ -23,20 +38,5 @@ function HelloComponent() {
         font-size: 90px;
       }
     `
-  );
-}
-
-export default function HelloPage() {
-  return (
-    <>
-      <Head>
-        <title>Fresh App</title>
-        {/* embed global style */}
-        <ResinCssGlobalStyle css={globalStyle} />
-        {/* embed collected css definitions */}
-        <ResinCssEmitter />
-      </Head>
-      <HelloComponent />
-    </>
   );
 }

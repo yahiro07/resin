@@ -8,14 +8,18 @@ import {
 } from "resin-css/mod.ts";
 import { globalStyle } from "../utils/global_style.ts";
 
-const AnimalSprite = createFC<{ iconText: string }>((props) => {
-  return solidify(
-    <div>{props.iconText}</div>,
-    css`
-      font-size: 200px;
-    `
+export default function ZooPage() {
+  return (
+    <>
+      <Head>
+        <title>Fresh App</title>
+        <ResinCssGlobalStyle css={globalStyle} />
+        <ResinCssEmitter />
+      </Head>
+      <ZooComponent />
+    </>
   );
-});
+}
 
 function ZooComponent() {
   return solidify(
@@ -51,15 +55,11 @@ function ZooComponent() {
   );
 }
 
-export default function ZooPage() {
-  return (
-    <>
-      <Head>
-        <title>Fresh App</title>
-        <ResinCssGlobalStyle css={globalStyle} />
-        <ResinCssEmitter />
-      </Head>
-      <ZooComponent />
-    </>
+const AnimalSprite = createFC<{ iconText: string }>((props) => {
+  return solidify(
+    <div>{props.iconText}</div>,
+    css`
+      font-size: 200px;
+    `
   );
-}
+});

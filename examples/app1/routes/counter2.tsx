@@ -8,6 +8,19 @@ import {
 import Counter2 from "../islands/Counter2.tsx";
 import { globalStyle } from "../utils/global_style.ts";
 
+export default function Counter2Page() {
+  return (
+    <>
+      <Head>
+        <title>Fresh App</title>
+        <ResinCssEmitter />
+        <ResinCssGlobalStyle css={globalStyle} />
+      </Head>
+      <PageContent />
+    </>
+  );
+}
+
 function PageContent() {
   return solidify(
     <div>
@@ -20,18 +33,5 @@ function PageContent() {
         margin-bottom: 10px;
       }
     `
-  );
-}
-
-export default function Counter2Page() {
-  return (
-    <>
-      <Head>
-        <title>Fresh App</title>
-        <ResinCssEmitter />
-        <ResinCssGlobalStyle css={globalStyle} />
-      </Head>
-      <PageContent />
-    </>
   );
 }

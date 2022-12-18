@@ -8,6 +8,19 @@ import {
 } from "resin-css/mod.ts";
 import { globalStyle } from "../utils/global_style.ts";
 
+export default function CounterPage() {
+  return (
+    <>
+      <Head>
+        <title>Fresh App</title>
+        <ResinCssGlobalStyle css={globalStyle} />
+        <ResinCssEmitter />
+      </Head>
+      <PageContent />
+    </>
+  );
+}
+
 function PageContent() {
   return solidify(
     <div>
@@ -41,18 +54,5 @@ function PageContent() {
         }
       }
     `
-  );
-}
-
-export default function CounterPage() {
-  return (
-    <>
-      <Head>
-        <title>Fresh App</title>
-        <ResinCssGlobalStyle css={globalStyle} />
-        <ResinCssEmitter />
-      </Head>
-      <PageContent />
-    </>
   );
 }
