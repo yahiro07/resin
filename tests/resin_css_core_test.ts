@@ -640,3 +640,25 @@ Deno.test("extractNestedCss #20, media query", () => {
 }`,
   );
 });
+
+Deno.test("extractNestedCss #21, keyframe animation", () => {
+  const parsed = extractNestedCss(
+    css`
+      color: blue;
+      animation: 3s linear infinite rotation1;
+      @keyframes rotation1{
+        0%{ transform: rotate(0); }
+        100%{ transform: rotate(360deg); }
+      }
+    `,
+    ".foo",
+  );
+  assertEquals(
+    parsed,
+    `.foo{color:blue; animation:3s linear infinite rotation1;}
+@keyframes rotation1{
+  0%{transform:rotate(0);}
+  100%{transform:rotate(360deg);}
+}`,
+  );
+});

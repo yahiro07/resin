@@ -40,7 +40,7 @@ function transformCssBodyTextToNormalizedLines(cssBodyText: string) {
   return (
     cssBodyText
       //remove comments
-      .replace(/\/\*.*\*\//g, "")
+      .replace(/\/\*.*?\*\//g, "")
       .replace(/\/\/.*\r?\n/g, "")
       //remove spaces
       .replace(/\s*([:{\.;>+~,])\s*/g, (_, p1) => p1)
@@ -101,7 +101,7 @@ export function combineMediaQueries(mediaQuerySpecs: string[]): string {
 
 type CssSlot = {
   selectorPath: string;
-  mediaQuerySpec: string;
+  groupRuleSpec: string;
   cssLines: string[];
 };
 
@@ -109,15 +109,28 @@ function prepareCssSlot(
   narrowers: string[],
   cssSlots: Record<string, CssSlot>,
 ) {
-  const pathParts = narrowers.filter((it) => !it.startsWith("@media"));
-  const mediaQueryParts = narrowers.filter((it) => it.startsWith("@media"));
-  const selectorPath = combineSelectorPaths(pathParts);
-  const mediaQuerySpec = combineMediaQueries(mediaQueryParts);
-  const slotKey = `${mediaQuerySpec}${selectorPath}`;
+  let selectorPath: string;
+  let groupRuleSpec: string;
+
+  const pathPartsKeyframeIndex = narrowers.findIndex((it) =>
+    it.startsWith("@keyframes")
+  );
+  if (pathPartsKeyframeIndex >= 0) {
+    groupRuleSpec = narrowers[pathPartsKeyframeIndex];
+    const pathParts = narrowers.slice(pathPartsKeyframeIndex + 1);
+    selectorPath = combineSelectorPaths(pathParts);
+  } else {
+    const pathParts = narrowers.filter((it) => !it.startsWith("@media"));
+    const mediaQueryParts = narrowers.filter((it) => it.startsWith("@media"));
+    selectorPath = combineSelectorPaths(pathParts);
+    groupRuleSpec = combineMediaQueries(mediaQueryParts);
+  }
+
+  const slotKey = `${groupRuleSpec}${selectorPath}`;
   if (!cssSlots[slotKey]) {
     cssSlots[slotKey] = {
       selectorPath,
-      mediaQuerySpec,
+      groupRuleSpec,
       cssLines: [],
     };
   }
@@ -125,13 +138,13 @@ function prepareCssSlot(
 }
 
 function stringifyCssSlots(slots: CssSlot[]) {
-  const { mediaQuerySpec } = slots[0];
+  const { groupRuleSpec } = slots[0];
   const cssContentLines = slots.map(
     (slot) => `${slot.selectorPath}{${slot.cssLines.join(" ")}}`,
   );
-  if (mediaQuerySpec) {
+  if (groupRuleSpec) {
     const cssContents = cssContentLines.map((line) => `  ${line}`).join("\n");
-    return `${mediaQuerySpec}{\n${cssContents}\n}`;
+    return `${groupRuleSpec}{\n${cssContents}\n}`;
   } else {
     return cssContentLines.join("\n");
   }
@@ -164,11 +177,15 @@ export function extractNestedCss(
       delete cssSlots[key];
     }
   }
-  const slotsGroupedByMediaQuery = groupArrayItems(
-    Object.values(cssSlots),
-    (slot) => slot.mediaQuerySpec,
+
+  const listSlots = Object.values(cssSlots);
+  const slotsGroupedByConditionalGruopRule = groupArrayItems(
+    listSlots,
+    (slot) => slot.groupRuleSpec,
   );
-  return Object.values(slotsGroupedByMediaQuery)
-    .map(stringifyCssSlots)
+  return [
+    ...Object.values(slotsGroupedByConditionalGruopRule)
+      .map(stringifyCssSlots),
+  ]
     .join("\n");
 }
