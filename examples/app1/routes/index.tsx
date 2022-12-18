@@ -8,7 +8,8 @@ export default function Home() {
       </Head>
       <a href="./hello">hello</a> <br />
       <a href="./counter">counter</a> <br />
-      <a href="./zoo">zoo</a>
+      <a href="./zoo">zoo</a> <br />
+      <a href="./counter2">rainbow counter</a>
     </>
   );
 }

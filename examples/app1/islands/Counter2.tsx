@@ -6,13 +6,13 @@ type Props = {
   start: number;
 };
 
-export default function Counter(props: Props) {
+export default function Counter2(props: Props) {
   const [count, setCount] = useState(props.start);
+
+  const colors = ["#f00", "#F80", "#ff0", "#0f0", "#0FF", "#08F", "#80f"];
   return solidify(
     <div>
-      <div class="text-part">
-        <p>{count}</p>
-      </div>
+      <div class="text-part">{count}</div>
       <div class="buttons-part">
         <Button onClick={() => setCount(count + 1)}>+1</Button>
         <Button onClick={() => setCount(count - 1)}>-1</Button>
@@ -21,8 +21,8 @@ export default function Counter(props: Props) {
     css`
       display: flex;
       > .text-part {
-        border: solid 1px blue;
-        color: #008;
+        border: solid 1px gray;
+        color: ${colors[Math.abs(count) % 7 >> 0]};
         width: 200px;
         font-size: 120px;
         font-weight: bold;
@@ -34,7 +34,7 @@ export default function Counter(props: Props) {
         justify-content: center;
         align-items: center;
         gap: 10px;
-        border: solid 1px blue;
+        border: solid 1px gray;
         width: 80px;
       }
     `

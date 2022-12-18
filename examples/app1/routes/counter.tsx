@@ -23,7 +23,7 @@ function PageContent() {
   return solidify(
     <div>
       <div class="panel">
-        <p class="hello">Hello World!!</p>
+        <p class="caption">Counter</p>
         <Counter start={3} />
       </div>
     </div>,
@@ -38,7 +38,7 @@ function PageContent() {
       > .panel {
         width: 400px;
         height: 300px;
-        background: lightblue;
+        background: #cef;
         padding: 10px;
         display: flex;
         flex-direction: column;
@@ -46,9 +46,9 @@ function PageContent() {
         align-items: center;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
 
-        > .hello {
+        > .caption {
           font-size: 40px;
-          color: green;
+          color: #04f;
         }
       }
     `
