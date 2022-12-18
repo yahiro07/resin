@@ -143,6 +143,6 @@ export function createFC<T extends {}>(
   };
 }
 
-export function cx(...args: string[]) {
-  return args.join(" ");
+export function cx(...args: (string | null | undefined | false)[]) {
+  return args.filter((a) => !!a).join(" ");
 }
