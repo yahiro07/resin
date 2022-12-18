@@ -10,7 +10,7 @@ Deno.test("css #1,", () => {
   assertEquals(cssBall.sourceCssText, `border:solid 1px red;background:blue;`);
   assertEquals(
     cssBall.cssText,
-    `.cs_5633d4ab{border:solid 1px red; background:blue;}`
+    `.cs_5633d4ab{border:solid 1px red; background:blue;}`,
   );
 });
 
@@ -24,7 +24,7 @@ Deno.test("css #2, embed values", () => {
   `;
   assertEquals(
     cssBall.sourceCssText,
-    `width:100px;border-color:red;background:blue;`
+    `width:100px;border-color:red;background:blue;`,
   );
 });
 
@@ -39,7 +39,7 @@ Deno.test("css #3, composition", () => {
   `;
   assertEquals(
     cssBall.sourceCssText,
-    `color:red;font-size:20px;background:blue;`
+    `color:red;font-size:20px;background:blue;`,
   );
 });
 
@@ -47,15 +47,19 @@ Deno.test("css #4, conditional composition", () => {
   const active1 = true;
   const active2 = false;
   const cssBall = css`
-    ${active1 &&
+    ${
+    active1 &&
     css`
       color: red;
-    `};
+    `
+  };
     background: blue;
-    ${active2 &&
+    ${
+    active2 &&
     css`
       border-color: green;
-    `};
+    `
+  };
   `;
   assertEquals(cssBall.sourceCssText, `color:red;background:blue;`);
 });

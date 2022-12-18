@@ -37,6 +37,6 @@ export default function Counter(props: Props) {
         border: solid 1px blue;
         width: 80px;
       }
-    `
+    `,
   );
 }

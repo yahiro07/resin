@@ -18,6 +18,6 @@ export function Button(props: JSX.HTMLAttributes<HTMLButtonElement>) {
       &:hover {
         background: #cfc;
       }
-    `
+    `,
   );
 }

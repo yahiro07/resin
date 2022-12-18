@@ -107,7 +107,7 @@ type CssSlot = {
 
 function prepareCssSlot(
   narrowers: string[],
-  cssSlots: Record<string, CssSlot>
+  cssSlots: Record<string, CssSlot>,
 ) {
   const pathParts = narrowers.filter((it) => !it.startsWith("@media"));
   const mediaQueryParts = narrowers.filter((it) => it.startsWith("@media"));
@@ -127,7 +127,7 @@ function prepareCssSlot(
 function stringifyCssSlots(slots: CssSlot[]) {
   const { mediaQuerySpec } = slots[0];
   const cssContentLines = slots.map(
-    (slot) => `${slot.selectorPath}{${slot.cssLines.join(" ")}}`
+    (slot) => `${slot.selectorPath}{${slot.cssLines.join(" ")}}`,
   );
   if (mediaQuerySpec) {
     const cssContents = cssContentLines.map((line) => `  ${line}`).join("\n");
@@ -139,7 +139,7 @@ function stringifyCssSlots(slots: CssSlot[]) {
 
 export function extractNestedCss(
   cssBodyText: string,
-  topSelector: string
+  topSelector: string,
 ): string {
   const srcLines = transformCssBodyTextToNormalizedLines(cssBodyText);
 
@@ -166,7 +166,7 @@ export function extractNestedCss(
   }
   const slotsGroupedByMediaQuery = groupArrayItems(
     Object.values(cssSlots),
-    (slot) => slot.mediaQuerySpec
+    (slot) => slot.mediaQuerySpec,
   );
   return Object.values(slotsGroupedByMediaQuery)
     .map(stringifyCssSlots)

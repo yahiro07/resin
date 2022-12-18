@@ -2,9 +2,9 @@ import { Head } from "$fresh/runtime.ts";
 import Counter from "../islands/Counter.tsx";
 import {
   css,
-  solidify,
   ResinCssEmitter,
   ResinCssGlobalStyle,
+  solidify,
 } from "resin-css/mod.ts";
 import { globalStyle } from "../utils/global_style.ts";
 
@@ -53,6 +53,6 @@ function PageContent() {
           color: #04f;
         }
       }
-    `
+    `,
   );
 }

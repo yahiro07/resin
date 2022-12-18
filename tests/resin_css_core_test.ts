@@ -25,11 +25,11 @@ Deno.test("connectPathSegment #1", () => {
   assertEquals(concatPathSegment(".foo", "*"), ".foo *");
   assertEquals(
     concatPathSegment("input", `&[type="number"]`),
-    `input[type="number"]`
+    `input[type="number"]`,
   );
   assertEquals(
     concatPathSegment("input", `[type="number"]`),
-    `input [type="number"]`
+    `input [type="number"]`,
   );
   assertEquals(concatPathSegment(".foo", ".parent &"), ".parent .foo");
   assertEquals(concatPathSegment(".foo", "&+&"), ".foo+.foo");
@@ -39,7 +39,7 @@ Deno.test("connectPathSegment #1", () => {
   assertEquals(concatPathSegment(".foo .bar", "&+&"), ".foo .bar+.foo .bar");
   assertEquals(
     concatPathSegment(".foo .bar", ".parent+&"),
-    ".parent+.foo .bar"
+    ".parent+.foo .bar",
   );
   assertEquals(concatPathSegment(".box", "& &__element"), ".box .box__element");
 });
@@ -47,16 +47,16 @@ Deno.test("connectPathSegment #1", () => {
 Deno.test("connectPathSegmentEx #1, selector list", () => {
   assertEquals(
     concatPathSegmentEx(".base", "p,div,span"),
-    ".base p,.base div,.base span"
+    ".base p,.base div,.base span",
   );
   assertEquals(concatPathSegmentEx(".aa,.bb", ">p"), ".aa>p,.bb>p");
   assertEquals(
     concatPathSegmentEx(".base", ">p,>div,>span"),
-    ".base>p,.base>div,.base>span"
+    ".base>p,.base>div,.base>span",
   );
   assertEquals(
     concatPathSegmentEx(".aa,.bb", ">.cc,>.dd"),
-    ".aa>.cc,.aa>.dd,.bb>.cc,.bb>.dd"
+    ".aa>.cc,.aa>.dd,.bb>.cc,.bb>.dd",
   );
 });
 
@@ -80,15 +80,15 @@ Deno.test("combineSelectorPaths #1", () => {
 
   assertEquals(
     combineSelectorPaths([".box", "& &__element"]),
-    ".box .box__element"
+    ".box .box__element",
   );
   assertEquals(
     combineSelectorPaths([".box", "& &__element", "&--modifier"]),
-    ".box .box__element--modifier"
+    ".box .box__element--modifier",
   );
   assertEquals(
     combineSelectorPaths(["#main", " span", "+span"]),
-    "#main span+span"
+    "#main span+span",
   );
   assertEquals(combineSelectorPaths(["#main", ">p"]), "#main>p");
 
@@ -99,7 +99,7 @@ Deno.test("combineSelectorPaths #1", () => {
   assertEquals(combineSelectorPaths([".alert", "&:hover"]), ".alert:hover");
   assertEquals(
     combineSelectorPaths([".alert", "[dir=rtl] &"]),
-    "[dir=rtl] .alert"
+    "[dir=rtl] .alert",
   );
   assertEquals(combineSelectorPaths([".alert", ":not(&)"]), ":not(.alert)");
 });
@@ -107,20 +107,20 @@ Deno.test("combineSelectorPaths #1", () => {
 Deno.test("combineSelectorPaths #2, selector list", () => {
   assertEquals(
     combineSelectorPaths([".base", "p,div,span"]),
-    ".base p,.base div,.base span"
+    ".base p,.base div,.base span",
   );
   assertEquals(combineSelectorPaths([".aa,.bb", ">p"]), ".aa>p,.bb>p");
   assertEquals(
     combineSelectorPaths([".base", ">p,>div,>span"]),
-    ".base>p,.base>div,.base>span"
+    ".base>p,.base>div,.base>span",
   );
   assertEquals(
     combineSelectorPaths([".aa,.bb", ">.cc,>.dd"]),
-    ".aa>.cc,.aa>.dd,.bb>.cc,.bb>.dd"
+    ".aa>.cc,.aa>.dd,.bb>.cc,.bb>.dd",
   );
   assertEquals(
     combineSelectorPaths([".base", ".aa,.bb", ".cc,.dd"]),
-    ".base .aa .cc,.base .aa .dd,.base .bb .cc,.base .bb .dd"
+    ".base .aa .cc,.base .aa .dd,.base .bb .cc,.base .bb .dd",
   );
 });
 
@@ -130,7 +130,7 @@ Deno.test("combineMediaQueries #1", () => {
       "@media screen and (max-width:640px)",
       "@media screen and (min-width:320px)",
     ]),
-    "@media screen and (max-width:640px) and (min-width:320px)"
+    "@media screen and (max-width:640px) and (min-width:320px)",
   );
 });
 
@@ -149,7 +149,7 @@ Deno.test("extractNestedCss #1, flat", () => {
       background: pink;
       font-weight: bold;
     `,
-    ".foo"
+    ".foo",
   );
   assertEquals(parsed, `.foo{color:red; background:pink; font-weight:bold;}`);
 });
@@ -170,14 +170,14 @@ Deno.test("extractNestedCss #2, nested", () => {
       }
       font-size: 20px;
     `,
-    ".foo"
+    ".foo",
   );
   assertEquals(
     parsed,
     `.foo{background:blue; font-size:20px;}
 .foo>.bar{color:green; font-weight:bold;}
 .foo .buzz{color:red;}
-.foo.zoo{color:pink;}`
+.foo.zoo{color:pink;}`,
   );
 });
 
@@ -185,14 +185,14 @@ Deno.test("extractNestedCss #3, nested, single line, condensed", () => {
   const parsed = extractNestedCss(
     `background:blue;>.bar{color:green;font-weight:bold;}.buzz{color:red;}&.zoo{color:pink;}font-size:20px;
     `,
-    ".foo"
+    ".foo",
   );
   assertEquals(
     parsed,
     `.foo{background:blue; font-size:20px;}
 .foo>.bar{color:green; font-weight:bold;}
 .foo .buzz{color:red;}
-.foo.zoo{color:pink;}`
+.foo.zoo{color:pink;}`,
   );
 });
 
@@ -210,14 +210,14 @@ Deno.test("extractNestedCss #4, nested, dirty form", () => {
         pink ; } font-size 
          : 20px  ;
     `,
-    ".foo"
+    ".foo",
   );
   assertEquals(
     parsed,
     `.foo{background:blue; font-size:20px;}
 .foo>.bar{color:green; font-weight:bold;}
 .foo .buzz{color:red;}
-.foo.zoo{color:pink;}`
+.foo.zoo{color:pink;}`,
   );
 });
 
@@ -242,14 +242,14 @@ Deno.test("extractNestedCss #5, dirty form with comments", () => {
       } font-size  
          : 20px  ;
     `,
-    ".foo"
+    ".foo",
   );
   assertEquals(
     parsed,
     `.foo{background:blue; font-size:20px;}
 .foo>.bar{color:green; font-weight:bold;}
 .foo .buzz{color:red;}
-.foo.zoo{color:pink;}`
+.foo.zoo{color:pink;}`,
   );
 });
 
@@ -277,7 +277,7 @@ Deno.test("extractNestedCss #6, nested, with ampersand", () => {
       }
       font-size: 20px;
     `,
-    ".foo"
+    ".foo",
   );
   assertEquals(
     parsed,
@@ -287,7 +287,7 @@ Deno.test("extractNestedCss #6, nested, with ampersand", () => {
 .foo:hover{color:yellow;}
 .foo__inner{color:green;}
 .foo--active{color:lime;}
-.foo::after{color:violet;}`
+.foo::after{color:violet;}`,
   );
 });
 
@@ -314,7 +314,7 @@ Deno.test("extractNestedCss #7, various selectors", () => {
         color: #123;
       }
     `,
-    ".foo"
+    ".foo",
   );
   assertEquals(
     parsed,
@@ -324,7 +324,7 @@ Deno.test("extractNestedCss #7, various selectors", () => {
 .foo+h3{color:green;}
 .foo~h4{color:#f08;}
 .foo *{color:#08f;}
-.foo #bar{color:#123;}`
+.foo #bar{color:#123;}`,
   );
 });
 
@@ -338,12 +338,12 @@ Deno.test("extractNestedCss #8, cascaded nesting", () => {
         color: blue;
       }
     `,
-    ".foo"
+    ".foo",
   );
   assertEquals(
     parsed,
     `.foo>div>p>span{color:red;}
-.foo h1 p span{color:blue;}`
+.foo h1 p span{color:blue;}`,
   );
 });
 
@@ -354,7 +354,7 @@ Deno.test("extractNestedCss #9", () => {
         color: red;
       }
     `,
-    ".foo"
+    ".foo",
   );
   assertEquals(parsed, `.foo h3+p{color:red;}`);
 });
@@ -375,14 +375,14 @@ Deno.test("extractNestedCss #10", () => {
         color: orange;
       }
     `,
-    ".foo"
+    ".foo",
   );
   assertEquals(
     parsed,
     `.foo p:first-child{color:red;}
 .foo p:not(.text){color:blue;}
 .foo h1::before{color:green;}
-.foo input[type="text"]{color:orange;}`
+.foo input[type="text"]{color:orange;}`,
   );
 });
 
@@ -400,14 +400,14 @@ Deno.test("extractNestedCss #11, multilevel nesting", () => {
         }
       }
     `,
-    ".foo"
+    ".foo",
   );
   assertEquals(
     parsed,
     `.foo{color:white;}
 .foo .bar{color:red;}
 .foo .bar .buzz{color:green;}
-.foo .bar .buzz .boo{color:blue;}`
+.foo .bar .buzz .boo{color:blue;}`,
   );
 });
 
@@ -425,14 +425,14 @@ Deno.test("extractNestedCss #12, multilevel nesting", () => {
         }
       }
     `,
-    ".foo"
+    ".foo",
   );
   assertEquals(
     parsed,
     `.foo{color:white;}
 .foo>.bar{color:red;}
 .foo>.bar>.buzz{color:green;}
-.foo>.bar>.buzz>.boo{color:blue;}`
+.foo>.bar>.buzz>.boo{color:blue;}`,
   );
 });
 
@@ -449,13 +449,13 @@ Deno.test("extractNestedCss #13", () => {
         }
       }
     `,
-    ".foo"
+    ".foo",
   );
   assertEquals(
     parsed,
     `.foo div{color:white;}
 .foo div+div{color:red;}
-.foo div>h1{color:blue;}`
+.foo div>h1{color:blue;}`,
   );
 });
 
@@ -467,14 +467,14 @@ Deno.test("extractNestedCss #14, media query", () => {
         width: 100%;
       }
     `,
-    ".foo"
+    ".foo",
   );
   assertEquals(
     parsed,
     `.foo{width:1200px;}
 @media screen and (max-width:640px){
   .foo{width:100%;}
-}`
+}`,
   );
 });
 
@@ -489,13 +489,13 @@ Deno.test("extractNestedCss #15, parent selector", () => {
         color: green;
       }
     `,
-    ".foo"
+    ".foo",
   );
   assertEquals(
     parsed,
     `.foo{color:red;}
 .parent .foo{color:blue;}
-.foo+.foo{color:green;}`
+.foo+.foo{color:green;}`,
   );
 });
 
@@ -513,14 +513,14 @@ Deno.test("extractNestedCss #16", () => {
         color: yellow;
       }
     `,
-    ".foo"
+    ".foo",
   );
   assertEquals(
     parsed,
     `.foo{color:red;}
 .foo .bar[data-active="true"]{color:blue;}
 .foo[data-active="true"]{color:green;}
-.foo [data-active="true"]{color:yellow;}`
+.foo [data-active="true"]{color:yellow;}`,
   );
 });
 
@@ -534,12 +534,12 @@ Deno.test("extractNestedCss #17", () => {
         }
       }
     `,
-    ".foo"
+    ".foo",
   );
   assertEquals(
     parsed,
     `.foo>p{color:red;}
-.foo>p+p{color:blue;}`
+.foo>p+p{color:blue;}`,
   );
 });
 
@@ -564,14 +564,14 @@ Deno.test("extractNestedCss #18", () => {
         }
       }
     `,
-    ".foo"
+    ".foo",
   );
   assertEquals(
     parsed,
     `.foo :hover{color:yellow;}
 .foo:hover{color:black;}
 .foo p:hover{color:blue;}
-.foo p>span:hover{color:green;}`
+.foo p>span:hover{color:green;}`,
   );
 });
 
@@ -593,13 +593,13 @@ Deno.test("extractNestedCss #19, selector list", () => {
         }
       }
     `,
-    ".foo"
+    ".foo",
   );
   assertEquals(
     parsed,
     `.foo{color:blue;}
 .foo p,.foo div,.foo span{color:red;}
-.foo .aa .cc,.foo .aa .dd,.foo .bb .cc,.foo .bb .dd{color:yellow;}`
+.foo .aa .cc,.foo .aa .dd,.foo .bb .cc,.foo .bb .dd{color:yellow;}`,
   );
 });
 
@@ -623,7 +623,7 @@ Deno.test("extractNestedCss #20, media query", () => {
         }
       }
     `,
-    ".foo"
+    ".foo",
   );
   assertEquals(
     parsed,
@@ -637,6 +637,6 @@ Deno.test("extractNestedCss #20, media query", () => {
 }
 @media screen and (min-width:480px){
   .foo .buzz{color:pink;}
-}`
+}`,
   );
 });

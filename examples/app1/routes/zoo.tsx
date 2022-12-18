@@ -1,10 +1,10 @@
 import { Head } from "$fresh/runtime.ts";
 import {
-  css,
-  solidify,
-  ResinCssEmitter,
   createFC,
+  css,
+  ResinCssEmitter,
   ResinCssGlobalStyle,
+  solidify,
 } from "resin-css/mod.ts";
 import { globalStyle } from "../utils/global_style.ts";
 
@@ -51,7 +51,7 @@ function ZooComponent() {
         right: 80px;
         top: 220px;
       }
-    `
+    `,
   );
 }
 
@@ -60,6 +60,6 @@ const AnimalSprite = createFC<{ iconText: string }>((props) => {
     <div>{props.iconText}</div>,
     css`
       font-size: 200px;
-    `
+    `,
   );
 });

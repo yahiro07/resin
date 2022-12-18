@@ -37,6 +37,6 @@ export default function Counter2(props: Props) {
         border: solid 1px gray;
         width: 80px;
       }
-    `
+    `,
   );
 }

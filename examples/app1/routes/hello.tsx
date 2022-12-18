@@ -1,9 +1,9 @@
 import { Head } from "$fresh/runtime.ts";
 import {
   css,
-  solidify,
   ResinCssEmitter,
   ResinCssGlobalStyle,
+  solidify,
 } from "resin-css/mod.ts";
 import { globalStyle } from "../utils/global_style.ts";
 
@@ -37,6 +37,6 @@ function HelloComponent() {
       > .sun {
         font-size: 90px;
       }
-    `
+    `,
   );
 }

@@ -34,7 +34,7 @@ export function arrayDiallel<A, B>(ar: A[], br: B[]): [A, B][] {
 
 export function groupArrayItems<T>(
   items: T[],
-  keyFn: (value: T) => string
+  keyFn: (value: T) => string,
 ): Record<string, T[]> {
   const res: Record<string, T[]> = {};
   for (const item of items) {

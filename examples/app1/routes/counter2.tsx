@@ -1,9 +1,9 @@
 import { Head } from "$fresh/runtime.ts";
 import {
   css,
-  solidify,
   ResinCssEmitter,
   ResinCssGlobalStyle,
+  solidify,
 } from "resin-css/mod.ts";
 import Counter2 from "../islands/Counter2.tsx";
 import { globalStyle } from "../utils/global_style.ts";
@@ -32,6 +32,6 @@ function PageContent() {
       > p {
         margin-bottom: 10px;
       }
-    `
+    `,
   );
 }

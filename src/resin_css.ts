@@ -1,4 +1,4 @@
-import { FunctionComponent, JSX, h } from "preact";
+import { FunctionComponent, h, JSX } from "preact";
 import { crc32 } from "./helpers.ts";
 import { extractCssTemplate, extractNestedCss } from "./resin_css_core.ts";
 
@@ -134,7 +134,7 @@ export const ResinCssGlobalStyle: FunctionComponent<{ css: CssBall }> = ({
 
 // deno-lint-ignore ban-types
 export function createFC<T extends {}>(
-  baseFC: FunctionComponent<T>
+  baseFC: FunctionComponent<T>,
 ): FunctionComponent<T & { class?: string }> {
   return (props: T & { class?: string }) => {
     const { class: className, ...baseProps } = props;
