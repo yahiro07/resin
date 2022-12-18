@@ -142,3 +142,7 @@ export function createFC<T extends {}>(
     return className ? addClassToVdom(vdom, className) : vdom;
   };
 }
+
+export function cx(...args: string[]) {
+  return args.join(" ");
+}
