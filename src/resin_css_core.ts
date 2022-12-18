@@ -150,6 +150,14 @@ function stringifyCssSlots(slots: CssSlot[]) {
   }
 }
 
+function collectKeyframeNames(slots: CssSlot[]): string[] {
+  return uniqueArrayItems(
+    slots.filter((slot) => slot.groupRuleSpec.startsWith("@keyframes"))
+      .map((slot) => slot.groupRuleSpec.match(/^@keyframes ([\w-]+)/)?.[1])
+      .filter((it) => !!it) as string[],
+  );
+}
+
 export function extractNestedCss(
   cssBodyText: string,
   topSelector: string,
@@ -183,9 +191,21 @@ export function extractNestedCss(
     listSlots,
     (slot) => slot.groupRuleSpec,
   );
-  return [
+
+  let cssText = [
     ...Object.values(slotsGroupedByConditionalGruopRule)
       .map(stringifyCssSlots),
   ]
     .join("\n");
+
+  const keyframeNames = collectKeyframeNames(listSlots);
+  const topClassName = topSelector.slice(1);
+  for (const keyframeName of keyframeNames) {
+    cssText = cssText.replaceAll(
+      keyframeName,
+      `${topClassName}_${keyframeName}`,
+    );
+  }
+
+  return cssText;
 }

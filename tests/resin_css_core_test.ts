@@ -655,8 +655,8 @@ Deno.test("extractNestedCss #21, keyframe animation", () => {
   );
   assertEquals(
     parsed,
-    `.foo{color:blue; animation:3s linear infinite rotation1;}
-@keyframes rotation1{
+    `.foo{color:blue; animation:3s linear infinite foo_rotation1;}
+@keyframes foo_rotation1{
   0%{transform:rotate(0);}
   100%{transform:rotate(360deg);}
 }`,
