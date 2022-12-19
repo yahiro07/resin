@@ -1,21 +1,10 @@
-import { Head } from "$fresh/runtime.ts";
-import {
-  createFC,
-  css,
-  ResinCssEmitter,
-  ResinCssGlobalStyle,
-  solidify,
-} from "resin-css/mod.ts";
-import { globalStyle } from "../utils/global_style.ts";
+import { createFC, css, solidify } from "resin-css/mod.ts";
+import { CommonHead } from "../utils/CommonHead.tsx";
 
 export default function ZooPage() {
   return (
     <>
-      <Head>
-        <title>Fresh App</title>
-        <ResinCssGlobalStyle css={globalStyle} />
-        <ResinCssEmitter />
-      </Head>
+      <CommonHead />
       <ZooComponent />
     </>
   );

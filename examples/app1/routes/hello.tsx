@@ -11,7 +11,7 @@ export default function HelloPage() {
   return (
     <>
       <Head>
-        <title>Fresh App</title>
+        <title>Resin CSS</title>
         {/* embed global style */}
         <ResinCssGlobalStyle css={globalStyle} />
         {/* embed collected css definitions */}

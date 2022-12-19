@@ -4,7 +4,7 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>Fresh App</title>
+        <title>Resin CSS</title>
       </Head>
       <a href="./hello">hello</a> <br />
       <a href="./counter">counter</a> <br />

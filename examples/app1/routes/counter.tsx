@@ -1,21 +1,11 @@
-import { Head } from "$fresh/runtime.ts";
+import { css, solidify } from "resin-css/mod.ts";
 import Counter from "../islands/Counter.tsx";
-import {
-  css,
-  ResinCssEmitter,
-  ResinCssGlobalStyle,
-  solidify,
-} from "resin-css/mod.ts";
-import { globalStyle } from "../utils/global_style.ts";
+import { CommonHead } from "../utils/CommonHead.tsx";
 
 export default function CounterPage() {
   return (
     <>
-      <Head>
-        <title>Fresh App</title>
-        <ResinCssGlobalStyle css={globalStyle} />
-        <ResinCssEmitter />
-      </Head>
+      <CommonHead />
       <PageContent />
     </>
   );
@@ -32,10 +22,7 @@ function PageContent() {
     css`
       height: 100vh;
       background: #eee;
-      padding: 10px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      padding: 40px;
 
       > .panel {
         width: 400px;

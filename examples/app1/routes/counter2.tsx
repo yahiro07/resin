@@ -1,21 +1,11 @@
-import { Head } from "$fresh/runtime.ts";
-import {
-  css,
-  ResinCssEmitter,
-  ResinCssGlobalStyle,
-  solidify,
-} from "resin-css/mod.ts";
+import { css, solidify } from "resin-css/mod.ts";
 import Counter2 from "../islands/Counter2.tsx";
-import { globalStyle } from "../utils/global_style.ts";
+import { CommonHead } from "../utils/CommonHead.tsx";
 
 export default function Counter2Page() {
   return (
     <>
-      <Head>
-        <title>Fresh App</title>
-        <ResinCssEmitter />
-        <ResinCssGlobalStyle css={globalStyle} />
-      </Head>
+      <CommonHead />
       <PageContent />
     </>
   );
