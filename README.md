@@ -1,4 +1,4 @@
-# resin-css
+# Resin CSS
 
 <img align="right" src="https://raw.githubusercontent.com/yahiro07/resin/main/resin_logo.png" height="160px" alt="the resin logo: two bottles labeled CSS and JS">
 
@@ -17,14 +17,14 @@ import {
   css,
   ResinCssEmitter,
   solidify,
-} from "https://deno.land/x/resin@v0.1.1/mod.ts";
+} from "https://deno.land/x/resin/mod.ts";
 ```
 
-Just reference the code from your Deno+Fresh app. No configurations required.
+Just import the code from your Deno+Fresh app. No configurations required.
 
 ### Styling a component
 
-Here is a basic function component using resin-css.
+Here is a basic function component using Resin CSS.
 
 ```tsx
 function HelloComponent() {
@@ -86,9 +86,6 @@ const globalCss = css`
     margin: 0;
     padding: 0;
   }
-  body {
-    background: #efe;
-  }
 `;
 
 export default function HelloPage() {
@@ -96,6 +93,7 @@ export default function HelloPage() {
     <>
       <Head>
         <title>Fresh App</title>
+        <ResinCssEmitter />
         <ResinCssGlobalStyle css={globalCss} />
       </Head>
       <HelloComponent />
