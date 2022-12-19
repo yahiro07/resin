@@ -1,6 +1,6 @@
 # resin-css
 
-<img align="right" src="./resin_logo.png" height="160px" alt="the resin logo: two bottles labeled CSS and JS">
+<img align="right" src="https://raw.githubusercontent.com/yahiro07/resin/main/resin_logo.png" height="160px" alt="the resin logo: two bottles labeled CSS and JS">
 
 A small css-in-js library works with Deno and Fresh.
 
