@@ -46,6 +46,7 @@ function createCssBallCached(sourceCssText: string): T_ClassName {
     cssBall = { className, sourceCssText, cssText };
     cssBalls.push(cssBall);
     classNameToSourceCssTextMap[className] = sourceCssText;
+    emitCssBallToDom(cssBall);
   }
   return cssBall.className;
 }
@@ -128,20 +129,16 @@ export function css(
   return createCssBallCached(inputCssText);
 }
 
-export function domStyled(
-  vdom: JSXElement,
-  className: string,
-): JSXElement {
-  const cssBall = getCssBallFromClassName(className);
-  if (!cssBall) {
-    return vdom;
-  }
-  const { cssText } = cssBall;
+function emitCssBallToDom(cssBall: CssBall) {
+  const { className, cssText } = cssBall;
   if (!IS_BROWSER) {
     pushCssTextToEmitterForSsr(className, cssText);
   } else {
     pushCssTextToEmitterForBrowser(className, cssText);
   }
+}
+
+export function domStyled(vdom: JSXElement, className: string): JSXElement {
   return addClassToVdom(vdom, className);
 }
 
