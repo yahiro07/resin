@@ -1,10 +1,5 @@
 import { Head } from "$fresh/runtime.ts";
-import {
-  css,
-  domStyled,
-  ResinCssEmitter,
-  ResinCssGlobalStyle,
-} from "resin-css/mod.ts";
+import { css, ResinCssEmitter, ResinCssGlobalStyle } from "resin-css/mod.ts";
 import { globalStyle } from "../utils/global_style.ts";
 
 export default function HelloPage() {
@@ -23,20 +18,19 @@ export default function HelloPage() {
 }
 
 function HelloComponent() {
-  //attach css to the resulting vdom of FunctionalComponent
-  return domStyled(
-    <div>
+  return (
+    <div
+      class={css`
+        color: blue;
+        font-size: 80px;
+        font-weight: bold;
+        > .sun {
+          font-size: 90px;
+        }
+    `}
+    >
       <span class="sun">🔆</span>
       Hello World
-    </div>,
-    css`
-      color: blue;
-      font-size: 80px;
-      font-weight: bold;
-      /* can be nested like scss */
-      > .sun {
-        font-size: 90px;
-      }
-    `,
+    </div>
   );
 }
