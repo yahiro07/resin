@@ -1,5 +1,5 @@
 import { useState } from "preact/hooks";
-import { css, solidify } from "resin-css/mod.ts";
+import { css, domStyled } from "resin-css/mod.ts";
 import { Button } from "../components/Button.tsx";
 
 type Props = {
@@ -10,7 +10,7 @@ export default function Counter2(props: Props) {
   const [count, setCount] = useState(props.start);
 
   const colors = ["#f00", "#F80", "#ff0", "#0f0", "#0FF", "#08F", "#80f"];
-  return solidify(
+  return domStyled(
     <div>
       <div class="text-part">{count}</div>
       <div class="buttons-part">

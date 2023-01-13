@@ -109,7 +109,7 @@ export function css(
   return createCssBallCached(inputCssText);
 }
 
-export function solidify(vdom: JSXElement, css: CssBall): JSXElement {
+export function domStyled(vdom: JSXElement, css: CssBall): JSXElement {
   const { className, cssText } = css;
   if (!IS_BROWSER) {
     pushCssTextToEmitterForSsr(className, cssText);

@@ -1,4 +1,4 @@
-import { createFC, css, solidify } from "resin-css/mod.ts";
+import { createFC, css, domStyled } from "resin-css/mod.ts";
 import { CommonHead } from "../utils/CommonHead.tsx";
 
 export default function ZooPage() {
@@ -11,7 +11,7 @@ export default function ZooPage() {
 }
 
 function ZooComponent() {
-  return solidify(
+  return domStyled(
     <div>
       <AnimalSprite iconText="🐈" class="cat" />
       <AnimalSprite iconText="🐇" class="rabbit" />
@@ -45,7 +45,7 @@ function ZooComponent() {
 }
 
 const AnimalSprite = createFC<{ iconText: string }>((props) => {
-  return solidify(
+  return domStyled(
     <div>{props.iconText}</div>,
     css`
       font-size: 200px;

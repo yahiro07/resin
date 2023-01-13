@@ -5,7 +5,7 @@
 A small css-in-js library works with Deno and Fresh.
 
 The core concept is build a decorated component by writing jsx and css parts and
-combine(solidify) them. Easy and clean inline code helps making a well-styled
+combine them. Easy and clean inline code helps making a well-styled
 apps.
 
 ## Usage
@@ -16,7 +16,7 @@ apps.
 import {
   css,
   ResinCssEmitter,
-  solidify,
+  domStyled,
 } from "https://deno.land/x/resin/mod.ts";
 ```
 
@@ -28,7 +28,7 @@ Here is a basic function component using Resin CSS.
 
 ```tsx
 function HelloComponent() {
-  return solidify(
+  return domStyled(
     <div>
       <span class="sun">🔆</span>
       Hello World
@@ -45,12 +45,12 @@ function HelloComponent() {
 }
 ```
 
-`css()` and `solidify()` are core API used for applying scoped css to the
+`css()` and `domStyled()` are core API used for applying scoped css to the
 resulting vdom of a function component. `css()` takes a string literal. The
 syntax of css text is basically compatible to SCSS. Multi-stage nesting is
 supported.
 
-`solidify()` internally creates a unique class name for the css and add the
+`domStyled()` internally creates a unique class name for the css and add the
 class prop to the vdom. It also creates a converted css texts prefixed with the
 class selector. The css definitions are collected and they are awaiting for the
 emission.
@@ -114,7 +114,7 @@ of child elements in the parent context.
 ```ts
 //create wrapped component, it accepts additional class prop
 const AnimalSprite = createFC<{ iconText: string }>((props) => {
-  return solidify(
+  return domStyled(
     <div>{props.iconText}</div>,
     css`
       font-size: 200px;
@@ -124,7 +124,7 @@ const AnimalSprite = createFC<{ iconText: string }>((props) => {
 
 function ZooComponent() {
   //apply customized style to children in parent component
-  return solidify(
+  return domStyled(
     <div>
       <AnimalSprite iconText="🐈" class="cat" />
       <AnimalSprite iconText="🐇" class="rabbit" />

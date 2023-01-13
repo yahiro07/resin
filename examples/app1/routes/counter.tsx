@@ -1,4 +1,4 @@
-import { css, solidify } from "resin-css/mod.ts";
+import { css, domStyled } from "resin-css/mod.ts";
 import Counter from "../islands/Counter.tsx";
 import { CommonHead } from "../utils/CommonHead.tsx";
 
@@ -12,7 +12,7 @@ export default function CounterPage() {
 }
 
 function PageContent() {
-  return solidify(
+  return domStyled(
     <div>
       <div class="panel">
         <p class="caption">Counter</p>

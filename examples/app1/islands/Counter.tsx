@@ -1,5 +1,5 @@
 import { useState } from "preact/hooks";
-import { css, solidify } from "resin-css/mod.ts";
+import { css, domStyled } from "resin-css/mod.ts";
 import { Button } from "../components/Button.tsx";
 
 type Props = {
@@ -8,7 +8,7 @@ type Props = {
 
 export default function Counter(props: Props) {
   const [count, setCount] = useState(props.start);
-  return solidify(
+  return domStyled(
     <div>
       <div class="text-part">
         <p>{count}</p>
