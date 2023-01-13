@@ -4,15 +4,16 @@ import { arrayDiallel, groupArrayItems, uniqueArrayItems } from "./helpers.ts";
 
 export function extractCssTemplate(
   template: TemplateStringsArray,
-  ...values: (string | number | { sourceCssText: string } | boolean)[]
+  values: (string | number | { sourceCssText: string } | boolean)[],
+  classNameToSourceCssTextMap?: Record<string, string>,
 ): string {
   let text = "";
   let i = 0;
   for (i = 0; i < values.length; i++) {
     text += template[i];
     const value = values[i];
-    if (typeof value === "object" && "sourceCssText" in value) {
-      text += value.sourceCssText;
+    if (typeof value === "string" && classNameToSourceCssTextMap?.[value]) {
+      text += classNameToSourceCssTextMap[value];
     } else if (
       value === false ||
       value === null ||

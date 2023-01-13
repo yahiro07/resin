@@ -13,7 +13,7 @@ function css(
   template: TemplateStringsArray,
   ...values: (string | number)[]
 ): string {
-  return extractCssTemplate(template, ...values);
+  return extractCssTemplate(template, values);
 }
 
 Deno.test("connectPathSegment #1", () => {
@@ -135,7 +135,7 @@ Deno.test("combineMediaQueries #1", () => {
 });
 
 Deno.test("extractCssTemplate #1,", () => {
-  const parsed = extractCssTemplate`
+  const parsed = css`
     border: solid 1px red;
     background: blue;
   `;

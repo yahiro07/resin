@@ -33,10 +33,11 @@ function addClassToVdom(vdom: JSXElement, className: string): JSXElement {
 
 const moduleLocalStateCommon = {
   cssBalls: [] as CssBall[],
+  classNameToSourceCssTextMap: {} as Record<string, string>,
 };
 
 function createCssBallCached(sourceCssText: string): T_ClassName {
-  const { cssBalls } = moduleLocalStateCommon;
+  const { cssBalls, classNameToSourceCssTextMap } = moduleLocalStateCommon;
   let cssBall = cssBalls.find((ball) => ball.sourceCssText === sourceCssText);
   if (!cssBall) {
     const inputCssTextMod = sourceCssText.replace(/,\r?\n/g, ",");
@@ -44,6 +45,7 @@ function createCssBallCached(sourceCssText: string): T_ClassName {
     const cssText = extractNestedCss(inputCssTextMod, `.${className}`);
     cssBall = { className, sourceCssText, cssText };
     cssBalls.push(cssBall);
+    classNameToSourceCssTextMap[className] = sourceCssText;
   }
   return cssBall.className;
 }
@@ -117,7 +119,12 @@ export function css(
   template: TemplateStringsArray,
   ...templateParameters: (string | number | CssBall | boolean)[]
 ): T_ClassName {
-  const inputCssText = extractCssTemplate(template, ...templateParameters);
+  const { classNameToSourceCssTextMap } = moduleLocalStateCommon;
+  const inputCssText = extractCssTemplate(
+    template,
+    templateParameters,
+    classNameToSourceCssTextMap,
+  );
   return createCssBallCached(inputCssText);
 }
 
