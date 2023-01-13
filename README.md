@@ -4,9 +4,7 @@
 
 A small css-in-js library works with Deno and Fresh.
 
-The core concept is build a decorated component by writing jsx and css parts and
-combine them. Easy and clean inline code helps making a well-styled
-apps.
+The usage is mostly compatible to Emotion. 
 
 ## Usage
 
@@ -15,8 +13,7 @@ apps.
 ```ts
 import {
   css,
-  ResinCssEmitter,
-  domStyled,
+  ResinCssEmitter
 } from "https://deno.land/x/resin/mod.ts";
 ```
 
@@ -24,36 +21,31 @@ Just import the code from your Deno+Fresh app. No configurations required.
 
 ### Styling a component
 
-Here is a basic function component using Resin CSS.
+Here is a basic function component with inline css.
 
 ```tsx
 function HelloComponent() {
-  return domStyled(
-    <div>
+  return (
+    <div
+      class={css`
+        color: blue;
+        font-size: 80px;
+        font-weight: bold;
+        > .sun {
+          font-size: 90px;
+        }
+    `}
+    >
       <span class="sun">🔆</span>
       Hello World
-    </div>,
-    css`
-      color: blue;
-      font-size: 80px;
-      font-weight: bold;
-      > .sun {
-        font-size: 90px;
-      }
-    `,
+    </div>
   );
 }
 ```
 
-`css()` and `domStyled()` are core API used for applying scoped css to the
-resulting vdom of a function component. `css()` takes a string literal. The
-syntax of css text is basically compatible to SCSS. Multi-stage nesting is
-supported.
+`css()` takes a string literal. The syntax of css text is basically compatible to SCSS. Multi-stage nesting is supported.
 
-`domStyled()` internally creates a unique class name for the css and add the
-class prop to the vdom. It also creates a converted css texts prefixed with the
-class selector. The css definitions are collected and they are awaiting for the
-emission.
+It internally creates a unique class name for the input css text. It also creates a converted css texts prefixed with the class selector. The css definitions are collected and they are awaiting for the emission.
 
 ### Embed collected CSS to the page
 
@@ -71,9 +63,7 @@ export default function HelloPage() {
 }
 ```
 
-Here is a page component for a route. `<ResinCssEmitter />` embeds the collected
-css definitions into `<head>` tag. A single `<style>` tag is created and all css
-are settled in this tag.
+Here is a page component for a route. `<ResinCssEmitter />` embeds the collected css definitions into `<head>` tag. A single `<style>` tag is created and all css are settled in this tag.
 
 ### Global Style
 
@@ -102,34 +92,53 @@ export default function HelloPage() {
 }
 ```
 
-`<ResinCssGlobalStyle />` embeds given css definition to the page without
-prefix. So the definition is regarded as global-scoped.
+`<ResinCssGlobalStyle />` embeds given css definition to the page without prefix. So the definition is regarded as global-scoped.
+
+
+### domStyled API
+
+There is an api named `domStyled`. It takes jsx vdom as first argument and css inline style definition as the second argument.
+
+It just set the generated className to the class prop of root element of the vdom. This might be readable since the code nesting is shallower than class={css\`...\`} inline spec.
+
+```ts
+function HelloComponent() {
+  return domStyled(
+    <div>
+      Hello World
+    </div>,
+    css`
+      color: blue;
+      font-size: 80px;
+      font-weight: bold;
+      > .sun {
+        font-size: 90px;
+      }
+    `,
+  );
+}
+```
 
 ### createFC API
 
 There is a component wrapper function createFC. It wraps a function component
-and provide class prop to the caller. It's convenient when customizing the style
+and provide class prop to the caller. It is convenient when customizing the style
 of child elements in the parent context.
 
 ```ts
 //create wrapped component, it accepts additional class prop
 const AnimalSprite = createFC<{ iconText: string }>((props) => {
-  return domStyled(
-    <div>{props.iconText}</div>,
-    css`
-      font-size: 200px;
-    `,
+  return (
+    <div class={css` font-size: 200px; `}>
+      {props.iconText}
+    </div>
   );
 });
 
 function ZooComponent() {
   //apply customized style to children in parent component
-  return domStyled(
-    <div>
-      <AnimalSprite iconText="🐈" class="cat" />
-      <AnimalSprite iconText="🐇" class="rabbit" />
-    </div>,
-    css`
+  return (
+    <div class={css`
       position: relative;
       > * {
         position: absolute;
@@ -143,25 +152,28 @@ function ZooComponent() {
         right: 10px;
         top: 10px;
       }
-    `,
+    `}>
+      <AnimalSprite iconText="🐈" class="cat" />
+      <AnimalSprite iconText="🐇" class="rabbit" />
+    </div>
   );
 }
 ```
 
-## Style compotion
+## Style composition
 
-A style definition can be embed into another by string interpolatiton.
+A style definition can be embed into another by string interpolation.
 
 ```tsx
 const base = css`
-    color: red;
-    font-size: 20px;
-  `;
+  color: red;
+  font-size: 20px;
+`;
 
 const extended = css`
-    ${base};
-    background: blue;
-  `;
+  ${base};
+  background: blue;
+`;
 ```
 
 ## License
