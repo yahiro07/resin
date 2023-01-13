@@ -4,6 +4,8 @@ import { extractCssTemplate, extractNestedCss } from "./resin_css_core.ts";
 
 type JSXElement = JSX.Element;
 
+type T_ClassName = string;
+
 type CssBall = {
   className: string;
   sourceCssText: string;
@@ -33,9 +35,9 @@ const moduleLocalStateCommon = {
   cssBalls: [] as CssBall[],
 };
 
-function createCssBallCached(sourceCssText: string): CssBall {
+function createCssBallCached(sourceCssText: string): T_ClassName {
   const { cssBalls } = moduleLocalStateCommon;
-  let cssBall = cssBalls.find((css) => css.sourceCssText === sourceCssText);
+  let cssBall = cssBalls.find((ball) => ball.sourceCssText === sourceCssText);
   if (!cssBall) {
     const inputCssTextMod = sourceCssText.replace(/,\r?\n/g, ",");
     const className = `cs_${crc32(inputCssTextMod)}`;
@@ -43,14 +45,21 @@ function createCssBallCached(sourceCssText: string): CssBall {
     cssBall = { className, sourceCssText, cssText };
     cssBalls.push(cssBall);
   }
-  return cssBall;
+  return cssBall.className;
+}
+
+export function getCssBallFromClassName(
+  className: string,
+): CssBall | undefined {
+  const { cssBalls } = moduleLocalStateCommon;
+  return cssBalls.find((ball) => ball.className === className);
 }
 
 //----------
 //ssr
 
 const moduleLocalStateForSsr = {
-  pageCssTexts: {} as Record<string, string>,
+  pageCssTexts: {} as Record<T_ClassName, string>,
 };
 
 function pushCssTextToEmitterForSsr(className: string, cssText: string) {
@@ -79,7 +88,10 @@ function getReginCssPageTagNode(): HTMLElement {
   return el;
 }
 
-function pushCssTextToEmitterForBrowser(className: string, cssText: string) {
+function pushCssTextToEmitterForBrowser(
+  className: string,
+  cssText: string,
+) {
   const sb = moduleLocalStateForBrowser;
   if (!sb.pageCssClassNames) {
     sb.pageCssClassNames = new Set();
@@ -104,13 +116,20 @@ function pushCssTextToEmitterForBrowser(className: string, cssText: string) {
 export function css(
   template: TemplateStringsArray,
   ...templateParameters: (string | number | CssBall | boolean)[]
-): CssBall {
+): T_ClassName {
   const inputCssText = extractCssTemplate(template, ...templateParameters);
   return createCssBallCached(inputCssText);
 }
 
-export function domStyled(vdom: JSXElement, css: CssBall): JSXElement {
-  const { className, cssText } = css;
+export function domStyled(
+  vdom: JSXElement,
+  className: string,
+): JSXElement {
+  const cssBall = getCssBallFromClassName(className);
+  if (!cssBall) {
+    return vdom;
+  }
+  const { cssText } = cssBall;
   if (!IS_BROWSER) {
     pushCssTextToEmitterForSsr(className, cssText);
   } else {
@@ -124,10 +143,14 @@ export const ResinCssEmitter: FunctionComponent = () => {
   return h("style", { id: "resin-css-page-css-tag" }, pageCssFullText);
 };
 
-export const ResinCssGlobalStyle: FunctionComponent<{ css: CssBall }> = ({
-  css,
+export const ResinCssGlobalStyle: FunctionComponent<{ css: T_ClassName }> = ({
+  css: className,
 }) => {
-  const { className, cssText } = css;
+  const ball = getCssBallFromClassName(className);
+  if (!ball) {
+    return null;
+  }
+  const { cssText } = ball;
   const cssOutputText = cssText.replace(new RegExp(`.${className}`, "g"), "");
   return h("style", null, cssOutputText);
 };
