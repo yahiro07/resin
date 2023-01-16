@@ -159,17 +159,22 @@ export const ResinCssGlobalStyle: FunctionComponent<{ css: T_ClassName }> = ({
   return h("style", null, cssOutputText);
 };
 
+export function cx(...args: (string | null | undefined | false)[]) {
+  return args.filter((a) => !!a).join(" ");
+}
+
 // deno-lint-ignore ban-types
 export function createFC<T extends {}>(
   baseFC: FunctionComponent<T>,
-): FunctionComponent<T & { class?: string }> {
-  return (props: T & { class?: string }) => {
-    const { class: className, ...baseProps } = props;
+  extraClassName?: string,
+): FunctionComponent<T & { class?: string; if?: boolean }> {
+  return (props: T & { class?: string; if?: boolean }) => {
+    const { if: propIf = true, class: propClassName, ...baseProps } = props;
+    if (!propIf) {
+      return null;
+    }
     const vdom = baseFC(baseProps as T) as JSXElement;
+    const className = cx(propClassName, extraClassName);
     return className ? addClassToVdom(vdom, className) : vdom;
   };
-}
-
-export function cx(...args: (string | null | undefined | false)[]) {
-  return args.filter((a) => !!a).join(" ");
 }
