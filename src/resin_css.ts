@@ -51,11 +51,13 @@ function createCssBallCached(sourceCssText: string): T_ClassName {
   return cssBall.className;
 }
 
-export function getCssBallFromClassName(
-  className: string,
-): CssBall | undefined {
-  const { cssBalls } = moduleLocalStateCommon;
-  return cssBalls.find((ball) => ball.className === className);
+function emitCssBallToDom(cssBall: CssBall) {
+  const { className, cssText } = cssBall;
+  if (!IS_BROWSER) {
+    pushCssTextToEmitterForSsr(className, cssText);
+  } else {
+    pushCssTextToEmitterForBrowser(className, cssText);
+  }
 }
 
 //----------
@@ -129,13 +131,27 @@ export function css(
   return createCssBallCached(inputCssText);
 }
 
-function emitCssBallToDom(cssBall: CssBall) {
-  const { className, cssText } = cssBall;
-  if (!IS_BROWSER) {
-    pushCssTextToEmitterForSsr(className, cssText);
-  } else {
-    pushCssTextToEmitterForBrowser(className, cssText);
-  }
+export function getCssBallFromClassName(
+  className: string,
+): CssBall | undefined {
+  const { cssBalls } = moduleLocalStateCommon;
+  return cssBalls.find((ball) => ball.className === className);
+}
+
+export function domStyledInline(
+  vdom: JSXElement,
+  className: string,
+): JSXElement {
+  const cssBall = getCssBallFromClassName(className);
+  const styleTag = h("style", null, cssBall?.cssText);
+  return {
+    ...vdom,
+    props: {
+      ...vdom.props,
+      children: [styleTag, ...vdom.props.children],
+      class: cx(vdom.props.class, className),
+    },
+  };
 }
 
 export function domStyled(vdom: JSXElement, className: string): JSXElement {
