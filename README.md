@@ -119,13 +119,26 @@ function HelloComponent() {
 }
 ```
 
+### styled API
+```tsx
+const RedButton = styled.button`
+  background: red;
+`;
+
+const RedButton2 = styled(MyButton)`
+  background: red;
+`;
+```
+styled-components compatible styled() API is provided.
+It accepts both plain tag-names and function components.
+
 ### createFC API
 
 There is a component wrapper function createFC. It wraps a function component
 and provide class prop to the caller. It is convenient when customizing the style
 of child elements in the parent context.
 
-```ts
+```tsx
 //create wrapped component, it accepts additional class prop
 const AnimalSprite = createFC<{ iconText: string }>((props) => {
   return (
@@ -160,6 +173,17 @@ function ZooComponent() {
 }
 ```
 
+It also provides if props.
+```tsx
+  { catVisible && <AnimalSprite iconText="🐈" /> }
+   <AnimalSprite iconText="🐈" if={catVisible} />
+```
+The two lines of the code above renders the same result.
+(It is rendered only when `catVisible` is true)
+
+if props make the code a little readable.
+
+
 ## Style composition
 
 A style definition can be embed into another by string interpolation.
@@ -179,7 +203,7 @@ const extended = css`
 
 ## Notes
 
-There seemed to be  some condition the style is not affected in SSR.
+There seemed to be some condition the style is not affected in SSR.
 It might be resolved by the workaround to write style emitters at the bottom of the dom tree, as the code below.
 
 ```tsx
