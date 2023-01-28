@@ -176,6 +176,35 @@ const extended = css`
 `;
 ```
 
+
+## Notes
+
+There seemed to be  some condition the style is not affected in SSR.
+It might be resolved by the workaround to write style emitters at the bottom of the dom tree, as the code below.
+
+```tsx
+export default function HelloPage() {
+  return (
+    <>
+      <Head>
+        <title>Fresh App</title>
+      </Head>
+      <HelloComponent />
+      
+      <ResinCssEmitter />
+      <ResinCssGlobalStyle css={globalCss} />
+    </>
+  );
+}
+
+```
+
+I'm considering writing Fresh plugin so as we do not need to insert these emitters manually.
+
+
+
+
+
 ## License
 
 MIT License
