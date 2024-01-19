@@ -124,23 +124,20 @@ function HelloComponent() {
 const RedButton = styled.button`
   background: red;
 `;
-
-const RedButton2 = styled(MyButton)`
-  background: red;
-`;
 ```
 styled-components compatible styled() API is provided.
-It accepts both plain tag-names and function components.
+It only supports plain dom element arguments.
+Function component arguments like `styled(Button)` are not supported.
 
-### createFC API
+### createFCX API
 
-There is a component wrapper function createFC. It wraps a function component
+There is a component wrapper function `createFCX`. It wraps a function component
 and provide class prop to the caller. It is convenient when customizing the style
 of child elements in the parent context.
 
 ```tsx
 //create wrapped component, it accepts additional class prop
-const AnimalSprite = createFC<{ iconText: string }>((props) => {
+const AnimalSprite = createFCX<{ iconText: string }>((props) => {
   return (
     <div class={css` font-size: 200px; `}>
       {props.iconText}

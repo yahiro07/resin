@@ -321,7 +321,7 @@ Deno.test("extractNestedCss #7, various selectors", () => {
     `.foo{color:blue;}
 .foo h1{color:red;}
 .foo>h2{color:yellow;}
-.foo+h3{color:green;}
+.foo+ h3{color:green;}
 .foo~h4{color:#f08;}
 .foo *{color:#08f;}
 .foo #bar{color:#123;}`,
@@ -356,7 +356,7 @@ Deno.test("extractNestedCss #9", () => {
     `,
     ".foo",
   );
-  assertEquals(parsed, `.foo h3+p{color:red;}`);
+  assertEquals(parsed, `.foo h3 + p{color:red;}`);
 });
 
 Deno.test("extractNestedCss #10", () => {
@@ -454,7 +454,7 @@ Deno.test("extractNestedCss #13", () => {
   assertEquals(
     parsed,
     `.foo div{color:white;}
-.foo div+div{color:red;}
+.foo div+ div{color:red;}
 .foo div>h1{color:blue;}`,
   );
 });
@@ -495,7 +495,7 @@ Deno.test("extractNestedCss #15, parent selector", () => {
     parsed,
     `.foo{color:red;}
 .parent .foo{color:blue;}
-.foo+.foo{color:green;}`,
+.foo + .foo{color:green;}`,
   );
 });
 
@@ -539,7 +539,7 @@ Deno.test("extractNestedCss #17", () => {
   assertEquals(
     parsed,
     `.foo>p{color:red;}
-.foo>p+p{color:blue;}`,
+.foo>p+ p{color:blue;}`,
   );
 });
 
@@ -660,5 +660,20 @@ Deno.test("extractNestedCss #21, keyframe animation", () => {
   0%{transform:rotate(0);}
   100%{transform:rotate(360deg);}
 }`,
+  );
+});
+
+Deno.test("extractNestedCss #22, preserve spaces next to '+' in calc()", () => {
+  const parsed = extractNestedCss(
+    css`
+      width: calc(100% + 20px);
+      width: calc(100% + var(--s-single));
+      width: calc(100% - 20px);
+    `,
+    ".foo",
+  );
+  assertEquals(
+    parsed,
+    `.foo{width:calc(100% + 20px); width:calc(100% + var(--s-single)); width:calc(100% - 20px);}`,
   );
 });
