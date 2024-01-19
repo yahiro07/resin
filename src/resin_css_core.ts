@@ -188,13 +188,13 @@ export function extractNestedCss(
   }
 
   const listSlots = Object.values(cssSlots);
-  const slotsGroupedByConditionalGruopRule = groupArrayItems(
+  const slotsGroupedByConditionalGroupRule = groupArrayItems(
     listSlots,
     (slot) => slot.groupRuleSpec,
   );
 
   let cssText = [
-    ...Object.values(slotsGroupedByConditionalGruopRule)
+    ...Object.values(slotsGroupedByConditionalGroupRule)
       .map(stringifyCssSlots),
   ]
     .join("\n");
