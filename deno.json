@@ -1,4 +1,5 @@
 {
+  "lock": false,
   "tasks": {
     "test": "deno test",
     "dev": "cd examples/app1 && deno task start"
