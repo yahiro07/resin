@@ -31,7 +31,7 @@ export function extractCssTemplate(
       //remove newlines
       .replace(/\s*\r?\n\s*/g, "")
       //remove spaces
-      .replace(/\s*([:{\.;>+~,])\s*/g, (_, p1) => p1)
+      .replace(/\s*([:{\.;>~,])\s*/g, (_, p1) => p1)
       //remove double semicolon
       .replace(/;;/g, ";")
   );
@@ -44,7 +44,7 @@ function transformCssBodyTextToNormalizedLines(cssBodyText: string) {
       .replace(/\/\*.*?\*\//g, "")
       .replace(/\/\/.*\r?\n/g, "")
       //remove spaces
-      .replace(/\s*([:{\.;>+~,])\s*/g, (_, p1) => p1)
+      .replace(/\s*([:{\.;>~,])\s*/g, (_, p1) => p1)
       //normalize newlines
       .replace(/\r?\n/g, "")
       .replace(/[;{}]/g, (m) => `${m}\n`)
