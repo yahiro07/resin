@@ -1,4 +1,4 @@
-import { createFC, css } from "resin-css/mod.ts";
+import { createFCX, css } from "resin-css/mod.ts";
 import { CommonHead } from "../utils/CommonHead.tsx";
 
 export default function ZooPage() {
@@ -45,7 +45,7 @@ function ZooComponent() {
   );
 }
 
-const AnimalSprite = createFC<{ iconText: string }>((props) => {
+const AnimalSprite = createFCX<{ iconText: string }>((props) => {
   return (
     <div class={css` font-size: 200px; `}>
       {props.iconText}
