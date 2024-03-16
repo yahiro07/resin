@@ -679,7 +679,7 @@ Deno.test("extractNestedCss #22, preserve spaces next to '+' in calc()", () => {
 });
 
 Deno.test(
-  "extractNestedCss #22, preserve spaces for cascaded selectors",
+  "extractNestedCss #23, preserve spaces for cascaded selectors",
   () => {
     const parsed = extractNestedCss(
       css`
@@ -695,6 +695,28 @@ Deno.test(
       parsed,
       `.foo{color:blue;}
 .foo .aa .bb .cc{color:red;}`,
+    );
+  },
+);
+
+Deno.test(
+  "extractNestedCss #24, @container",
+  () => {
+    const parsed = extractNestedCss(
+      css`
+        color: red;
+        @container (width>300px) {
+          color: blue;
+        }
+      `,
+      ".foo",
+    );
+    assertEquals(
+      parsed,
+      `.foo{color:red;}
+@container (width>300px){
+  .foo{color:blue;}
+}`,
     );
   },
 );
