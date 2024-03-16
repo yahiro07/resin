@@ -31,7 +31,7 @@ export function extractCssTemplate(
       //remove newlines
       .replace(/\s*\r?\n\s*/g, "")
       //remove spaces
-      .replace(/\s*([:{;>~,])\s*/g, (_, p1) => p1)
+      .replace(/\s*([:{;~,])\s*/g, (_, p1) => p1)
       //remove double semicolon
       .replace(/;;/g, ";")
   );
@@ -44,7 +44,7 @@ function transformCssBodyTextToNormalizedLines(cssBodyText: string) {
       .replace(/\/\*.*?\*\//g, "")
       .replace(/\/\/.*\r?\n/g, "")
       //remove spaces
-      .replace(/\s*([:{;>~,])\s*/g, (_, p1) => p1)
+      .replace(/\s*([:{;~,])\s*/g, (_, p1) => p1)
       .replace(/&\s+\./g, "&.")
       //normalize newlines
       .replace(/\r?\n/g, "")
@@ -92,13 +92,14 @@ export function combineMediaQueries(mediaQuerySpecs: string[]): string {
   const srcParts = mediaQuerySpecs
     .map((mq) =>
       mq
-        .replace(/^@media\s/, "")
+        .replace(/^(@media|@container)\s/, "")
         .split("and")
         .map((it) => it.trim())
     )
     .flat();
   const parts = uniqueArrayItems(srcParts);
-  return `@media ${parts.join(" and ")}`;
+  const head = mediaQuerySpecs[0].split(" ")[0];
+  return `${head} ${parts.join(" and ")}`;
 }
 
 type CssSlot = {
@@ -122,8 +123,12 @@ function prepareCssSlot(
     const pathParts = narrowers.slice(pathPartsKeyframeIndex + 1);
     selectorPath = combineSelectorPaths(pathParts);
   } else {
-    const pathParts = narrowers.filter((it) => !it.startsWith("@media"));
-    const mediaQueryParts = narrowers.filter((it) => it.startsWith("@media"));
+    const pathParts = narrowers.filter((it) =>
+      !it.match(/^(@media|@container)/)
+    );
+    const mediaQueryParts = narrowers.filter((it) =>
+      it.match(/^(@media|@container)/)
+    );
     selectorPath = combineSelectorPaths(pathParts);
     groupRuleSpec = combineMediaQueries(mediaQueryParts);
   }

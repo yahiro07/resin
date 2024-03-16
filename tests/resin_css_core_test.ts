@@ -175,7 +175,7 @@ Deno.test("extractNestedCss #2, nested", () => {
   assertEquals(
     parsed,
     `.foo{background:blue; font-size:20px;}
-.foo>.bar{color:green; font-weight:bold;}
+.foo> .bar{color:green; font-weight:bold;}
 .foo .buzz{color:red;}
 .foo.zoo{color:pink;}`,
   );
@@ -215,7 +215,7 @@ Deno.test("extractNestedCss #4, nested, dirty form", () => {
   assertEquals(
     parsed,
     `.foo{background:blue; font-size:20px;}
-.foo>.bar{color:green; font-weight:bold;}
+.foo> .bar{color:green; font-weight:bold;}
 .foo .buzz{color:red;}
 .foo.zoo{color:pink;}`,
   );
@@ -247,7 +247,7 @@ Deno.test("extractNestedCss #5, dirty form with comments", () => {
   assertEquals(
     parsed,
     `.foo{background:blue; font-size:20px;}
-.foo>.bar{color:green; font-weight:bold;}
+.foo> .bar{color:green; font-weight:bold;}
 .foo .buzz{color:red;}
 .foo.zoo{color:pink;}`,
   );
@@ -320,7 +320,7 @@ Deno.test("extractNestedCss #7, various selectors", () => {
     parsed,
     `.foo{color:blue;}
 .foo h1{color:red;}
-.foo>h2{color:yellow;}
+.foo> h2{color:yellow;}
 .foo+ h3{color:green;}
 .foo~h4{color:#f08;}
 .foo *{color:#08f;}
@@ -342,7 +342,7 @@ Deno.test("extractNestedCss #8, cascaded nesting", () => {
   );
   assertEquals(
     parsed,
-    `.foo>div>p>span{color:red;}
+    `.foo> div > p > span{color:red;}
 .foo h1 p span{color:blue;}`,
   );
 });
@@ -430,9 +430,9 @@ Deno.test("extractNestedCss #12, multilevel nesting", () => {
   assertEquals(
     parsed,
     `.foo{color:white;}
-.foo>.bar{color:red;}
-.foo>.bar>.buzz{color:green;}
-.foo>.bar>.buzz>.boo{color:blue;}`,
+.foo> .bar{color:red;}
+.foo> .bar> .buzz{color:green;}
+.foo> .bar> .buzz> .boo{color:blue;}`,
   );
 });
 
@@ -455,7 +455,7 @@ Deno.test("extractNestedCss #13", () => {
     parsed,
     `.foo div{color:white;}
 .foo div+ div{color:red;}
-.foo div>h1{color:blue;}`,
+.foo div> h1{color:blue;}`,
   );
 });
 
@@ -538,8 +538,8 @@ Deno.test("extractNestedCss #17", () => {
   );
   assertEquals(
     parsed,
-    `.foo>p{color:red;}
-.foo>p+ p{color:blue;}`,
+    `.foo> p{color:red;}
+.foo> p+ p{color:blue;}`,
   );
 });
 
@@ -571,7 +571,7 @@ Deno.test("extractNestedCss #18", () => {
     `.foo :hover{color:yellow;}
 .foo:hover{color:black;}
 .foo p:hover{color:blue;}
-.foo p>span:hover{color:green;}`,
+.foo p> span:hover{color:green;}`,
   );
 });
 
@@ -679,7 +679,7 @@ Deno.test("extractNestedCss #22, preserve spaces next to '+' in calc()", () => {
 });
 
 Deno.test(
-  "extractNestedCss #22, preserve spaces for cascaded selectors",
+  "extractNestedCss #23, preserve spaces for cascaded selectors",
   () => {
     const parsed = extractNestedCss(
       css`
@@ -695,6 +695,28 @@ Deno.test(
       parsed,
       `.foo{color:blue;}
 .foo .aa .bb .cc{color:red;}`,
+    );
+  },
+);
+
+Deno.test(
+  "extractNestedCss #24, @container",
+  () => {
+    const parsed = extractNestedCss(
+      css`
+        color: red;
+        @container (width > 300px) {
+          color: blue;
+        }
+      `,
+      ".foo",
+    );
+    assertEquals(
+      parsed,
+      `.foo{color:red;}
+@container (width > 300px){
+  .foo{color:blue;}
+}`,
     );
   },
 );
