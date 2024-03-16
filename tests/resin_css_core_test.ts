@@ -16,7 +16,7 @@ function css(
   return extractCssTemplate(template, values);
 }
 
-Deno.test("connectPathSegment #1", () => {
+Deno.test("concatPathSegment #1", () => {
   assertEquals(concatPathSegment(".foo", ">.bar"), ".foo>.bar");
   assertEquals(concatPathSegment(".foo", "+.bar"), ".foo+.bar");
   assertEquals(concatPathSegment(".foo", "&.bar"), ".foo.bar");
@@ -677,3 +677,24 @@ Deno.test("extractNestedCss #22, preserve spaces next to '+' in calc()", () => {
     `.foo{width:calc(100% + 20px); width:calc(100% + var(--s-single)); width:calc(100% - 20px);}`,
   );
 });
+
+Deno.test(
+  "extractNestedCss #22, preserve spaces for cascaded selectors",
+  () => {
+    const parsed = extractNestedCss(
+      css`
+        color: blue;
+
+        .aa .bb .cc {
+          color: red;
+        }
+      `,
+      ".foo",
+    );
+    assertEquals(
+      parsed,
+      `.foo{color:blue;}
+.foo .aa .bb .cc{color:red;}`,
+    );
+  },
+);
